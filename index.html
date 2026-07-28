@@ -465,18 +465,8 @@
                 </button>
             </div>
 
-            <!-- Code Editor Area -->
-            <textarea id="sandbox-editor" class="w-full h-52 font-mono text-xs p-3 neu-pressed text-emerald-400 bg-slate-950 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500" spellcheck="false">#include <iostream>
-using namespace std;
-
-int main() {
-    int val = 42;
-    int* ptr = &val;
-    cout << "Value: " << val << endl;
-    cout << "Memory Address: " << ptr << endl;
-    cout << "Dereferenced Pointer: " << *ptr << endl;
-    return 0;
-}</textarea>
+            <!-- Code Editor Area (value set via JS to avoid HTML parsing issues) -->
+            <textarea id="sandbox-editor" class="w-full h-52 font-mono text-xs p-3 neu-pressed text-emerald-400 bg-slate-950 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500" spellcheck="false"></textarea>
 
             <!-- Output Terminal -->
             <div class="flex flex-col gap-1">
@@ -610,7 +600,8 @@ int main() {
             updateFavoritesBadge();
             setupSearchListeners();
             setupSidebarMobileToggle();
-            
+            initSandboxEditor();
+
             // Try to discover additional notebooks from GitHub API
             syncWithGitHubRepo();
 
@@ -620,6 +611,25 @@ int main() {
                 loadNotebook(hash);
             }
         });
+
+        // ===== SANDBOX DEFAULT CODE (set via JS to avoid HTML parsing stripping <iostream>) =====
+        function initSandboxEditor() {
+            const ta = document.getElementById('sandbox-editor');
+            if (!ta) return;
+            ta.value = [
+                '#include <iostream>',
+                'using namespace std;',
+                '',
+                'int main() {',
+                '    int val = 42;',
+                '    int* ptr = &val;',
+                '    cout << "Value: " << val << endl;',
+                '    cout << "Memory Address: " << ptr << endl;',
+                '    cout << "Dereferenced Pointer: " << *ptr << endl;',
+                '    return 0;',
+                '}'
+            ].join('\n');
+        }
 
         // ===== GITHUB REPO SYNC =====
         async function syncWithGitHubRepo() {
@@ -852,8 +862,8 @@ int main() {
                                 </div>
                             </div>
 
-                            <!-- Code Editor -->
-                            <textarea id="${cellId}" class="w-full font-mono text-xs p-4 bg-slate-950 text-emerald-300 border-none outline-none resize-y min-h-[100px] focus:ring-1 focus:ring-blue-500/50" spellcheck="false">${escapeHtml(cleanCode)}</textarea>
+                            <!-- Code Editor (height set dynamically via JS after append) -->
+                            <textarea id="${cellId}" data-code="true" class="w-full font-mono text-xs p-4 bg-slate-950 text-emerald-300 border-none outline-none resize-y focus:ring-1 focus:ring-blue-500/50" spellcheck="false"></textarea>
 
                             <!-- Output Box -->
                             <div id="output-${cellId}" class="hidden border-t border-slate-800 p-4 crt-terminal">
@@ -865,6 +875,16 @@ int main() {
                             </div>
                         </div>
                     `;
+                }
+
+                // Set textarea value & height AFTER append to DOM
+                if (cell.cell_type === 'code') {
+                    const ta = cellElement.querySelector('textarea[data-code]');
+                    if (ta) {
+                        ta.value = cleanMagicCommands(Array.isArray(cell.source) ? cell.source.join('') : cell.source);
+                        autoResizeTextarea(ta);
+                        ta.addEventListener('input', () => autoResizeTextarea(ta));
+                    }
                 }
 
                 cellsContainer.appendChild(cellElement);
@@ -891,18 +911,50 @@ int main() {
                 .replace(/"/g, '&quot;');
         }
 
+        // Auto-resize a textarea to fit its content exactly
+        function autoResizeTextarea(ta) {
+            ta.style.height = 'auto';
+            // Add small padding buffer so last line isn't clipped
+            ta.style.height = (ta.scrollHeight + 2) + 'px';
+        }
+
+        // Clean magic commands: extract real code from %%writefile blocks,
+        // convert !g++ compile lines to a comment, strip other magics
         function cleanMagicCommands(code) {
-            return code.split('\n').map(line => {
+            const lines = code.split('\n');
+            const firstLine = lines[0].trim();
+
+            // %%writefile filename.ext  →  strip magic line, return rest as-is
+            if (firstLine.startsWith('%%writefile')) {
+                return lines.slice(1).join('\n');
+            }
+
+            // !g++ compile-run command  →  show as informational comment
+            if (firstLine.startsWith('!g++') || firstLine.startsWith('!c++')) {
+                return `// Compile & Run: ${firstLine}\n// (Click Run to execute the extracted C++ code above)`;
+            }
+
+            // Other magic/shell lines  →  comment them out
+            return lines.map(line => {
                 const t = line.trim();
-                if (t.startsWith('%%writefile') || t.startsWith('!g++') || t.startsWith('!python') || t.startsWith('%%')) {
-                    return `// ${line}`;
+                if (t.startsWith('!') || t.startsWith('%')) {
+                    return `# ${line}`;
                 }
                 return line;
             }).join('\n');
         }
 
         function detectCodeLanguage(code) {
-            if (code.includes('#include') || code.includes('std::') || code.includes('cout') || code.includes('int main')) {
+            const firstLine = code.trim().split('\n')[0] || '';
+            // %%writefile *.cpp or code body has C++ markers
+            if (firstLine.startsWith('%%writefile') && (firstLine.endsWith('.cpp') || firstLine.endsWith('.c'))) {
+                return 'cpp';
+            }
+            // !g++ compile command — treat cell as cpp so Run compiles it
+            if (firstLine.startsWith('!g++') || firstLine.startsWith('!c++')) {
+                return 'cpp';
+            }
+            if (code.includes('#include') || code.includes('std::') || code.includes('cout <<') || code.includes('int main')) {
                 return 'cpp';
             }
             return 'python';
