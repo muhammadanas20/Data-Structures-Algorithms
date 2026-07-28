@@ -31,16 +31,16 @@
         :root {
             --bg-color: #e6edf8;
             --surface-color: #e6edf8;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --border-color: #d1dbe8;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
             --neu-shadow-dark: #b8c4d8;
             --neu-shadow-light: #ffffff;
             --card-bg: #e6edf8;
-            --code-bg: #1e222d;
-            --code-text: #e2e8f0;
-            --accent-primary: #3b82f6;
-            --accent-secondary: #10b981;
+            --code-bg: #f8fafc;
+            --code-text: #0f172a;
+            --accent-primary: #2563eb;
+            --accent-secondary: #059669;
             --accent-heart: #ef4444;
         }
 
@@ -172,19 +172,26 @@
         .markdown-body th, .markdown-body td { border: 1px solid var(--border-color); padding: 0.5rem 0.8rem; text-align: left; }
         .markdown-body th { background: rgba(0,0,0,0.05); font-weight: 600; }
         .markdown-body code:not(pre code) { background: rgba(100, 116, 139, 0.15); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.875em; color: var(--accent-primary); }
-        .markdown-body pre { margin-bottom: 1rem; border-radius: 10px; overflow-x: auto; }
+        .markdown-body pre { margin-bottom: 1rem; border-radius: 12px; overflow-x: auto; background-color: var(--code-bg); border: 1px solid var(--border-color); padding: 1rem; }
+        .markdown-body pre code { background: transparent !important; padding: 0 !important; }
         .markdown-body strong { font-weight: 700; }
         .markdown-body em { font-style: italic; }
         .markdown-body hr { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
 
-        /* ===== CODE OUTPUT TERMINAL ===== */
+        /* ===== CODE HIGHLIGHT OVERRIDES & TERMINAL ===== */
+        pre code.hljs {
+            background: var(--code-bg) !important;
+            color: var(--code-text) !important;
+            border-radius: 12px;
+        }
+
         .crt-terminal {
             background-color: var(--code-bg);
-            color: #38bdf8;
+            color: var(--code-text);
             font-family: 'Courier New', Courier, monospace;
             border-radius: 12px;
-            box-shadow: inset 3px 3px 8px #05070a, inset -3px -3px 8px #151a28;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 2px 2px 6px var(--neu-shadow-dark), inset -2px -2px 6px var(--neu-shadow-light);
+            border: 1px solid var(--border-color);
         }
 
         /* ===== ANIMATIONS ===== */
@@ -506,12 +513,12 @@
             </div>
 
             <!-- Code Editor Area (value set via JS to avoid HTML parsing issues) -->
-            <textarea id="sandbox-editor" class="w-full h-40 sm:h-52 font-mono text-xs p-3 neu-pressed text-emerald-400 bg-slate-950 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500 overflow-y-auto" spellcheck="false"></textarea>
+            <textarea id="sandbox-editor" class="w-full h-40 sm:h-52 font-mono text-xs p-3 neu-pressed text-[var(--code-text)] bg-[var(--code-bg)] border border-[var(--border-color)] rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-blue-500/50 overflow-y-auto" spellcheck="false"></textarea>
 
             <!-- Output Terminal -->
             <div class="flex flex-col gap-1 min-h-0">
                 <span class="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Output Terminal</span>
-                <pre id="sandbox-output" class="crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-cyan-300">Ready to run code...</pre>
+                <pre id="sandbox-output" class="crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-emerald-500 dark:text-emerald-400">Ready to run code...</pre>
             </div>
         </div>
     </div>
@@ -707,20 +714,33 @@
         }
 
         // ===== THEME TOGGLE =====
+        function applyHighlightTheme(isDark) {
+            const themeLink = document.getElementById('highlight-theme');
+            if (themeLink) {
+                themeLink.href = isDark 
+                    ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css'
+                    : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
+            }
+        }
+
         function initTheme() {
             const savedTheme = localStorage.getItem('dsa_theme') || 'dark';
-            if (savedTheme === 'light') {
+            const isDark = savedTheme !== 'light';
+            
+            if (!isDark) {
                 document.documentElement.classList.remove('dark');
-                document.getElementById('theme-icon').className = 'fa-solid fa-sun text-amber-400';
+                document.getElementById('theme-icon').className = 'fa-solid fa-sun text-amber-500';
             } else {
                 document.documentElement.classList.add('dark');
                 document.getElementById('theme-icon').className = 'fa-solid fa-moon text-blue-400';
             }
+            applyHighlightTheme(isDark);
 
             document.getElementById('theme-toggle').addEventListener('click', () => {
-                const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('dsa_theme', isDark ? 'dark' : 'light');
-                document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-400';
+                const dark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('dsa_theme', dark ? 'dark' : 'light');
+                document.getElementById('theme-icon').className = dark ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-500';
+                applyHighlightTheme(dark);
             });
         }
 
@@ -850,6 +870,63 @@
         }
 
         // ===== RENDER NOTEBOOK CELLS =====
+        function highlightCode(code, lang) {
+            const validLang = (lang && (lang.toLowerCase() === 'cpp' || lang.toLowerCase() === 'c++')) ? 'cpp' : 'python';
+            try {
+                return hljs.highlight(code, { language: validLang }).value;
+            } catch (e) {
+                return escapeHtml(code);
+            }
+        }
+
+        function toggleEditCodeCell(cellId) {
+            const viewEl = document.getElementById(`view-${cellId}`);
+            const editEl = document.getElementById(cellId);
+            const label  = document.getElementById(`edit-label-${cellId}`);
+            if (!editEl || !viewEl) return;
+
+            if (editEl.classList.contains('hidden')) {
+                viewEl.classList.add('hidden');
+                editEl.classList.remove('hidden');
+                editEl.focus();
+                autoResizeTextarea(editEl);
+                if (label) label.textContent = 'View';
+            } else {
+                updateHighlightedView(cellId);
+                editEl.classList.add('hidden');
+                viewEl.classList.remove('hidden');
+                if (label) label.textContent = 'Edit';
+            }
+        }
+
+        function enableEditCodeCell(cellId) {
+            const viewEl = document.getElementById(`view-${cellId}`);
+            const editEl = document.getElementById(cellId);
+            const label  = document.getElementById(`edit-label-${cellId}`);
+            if (!editEl || !viewEl) return;
+            
+            if (editEl.classList.contains('hidden')) {
+                viewEl.classList.add('hidden');
+                editEl.classList.remove('hidden');
+                editEl.focus();
+                autoResizeTextarea(editEl);
+                if (label) label.textContent = 'View';
+            }
+        }
+
+        function updateHighlightedView(cellId) {
+            const viewEl = document.getElementById(`view-${cellId}`);
+            const editEl = document.getElementById(cellId);
+            if (!editEl || !viewEl) return;
+
+            const code = editEl.value;
+            const lang = editEl.getAttribute('data-lang') || 'cpp';
+            const codeTag = viewEl.querySelector('code');
+            if (codeTag) {
+                codeTag.innerHTML = highlightCode(code, lang);
+            }
+        }
+
         function renderNotebookCells(nbData) {
             const cellsContainer = document.getElementById('cells-container');
             cellsContainer.innerHTML = '';
@@ -879,39 +956,48 @@
                     const cleanCode = cleanMagicCommands(rawCode);
 
                     cellElement.innerHTML = `
-                        <div class="neu-flat overflow-hidden border border-slate-700/30 rounded-2xl">
+                        <div class="neu-flat overflow-hidden border border-[var(--border-color)] rounded-2xl transition-colors duration-300">
                             <!-- Cell Header Bar -->
-                            <div class="flex items-center justify-between bg-slate-900/40 px-4 py-2.5 border-b border-slate-700/30 text-xs">
+                            <div class="flex items-center justify-between bg-[var(--surface-color)] px-4 py-2.5 border-b border-[var(--border-color)] text-xs">
                                 <div class="flex items-center gap-2">
-                                    <span class="font-mono text-[11px] text-blue-400 font-bold">In [${index + 1}]:</span>
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-400 font-semibold border border-blue-500/20 uppercase">
+                                    <span class="font-mono text-[11px] text-blue-500 dark:text-blue-400 font-bold">In [${index + 1}]:</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border border-blue-500/20 uppercase">
                                         ${lang}
                                     </span>
                                 </div>
                                 
                                 <div class="flex items-center gap-2">
-                                    <button onclick="copyCodeCell('${cellId}')" class="neu-button px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:text-white flex items-center gap-1" title="Copy Code">
+                                    <button onclick="toggleEditCodeCell('${cellId}')" id="edit-btn-${cellId}" class="neu-button px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:text-blue-500 flex items-center gap-1" title="Toggle Edit/View">
+                                        <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+                                        <span id="edit-label-${cellId}">Edit</span>
+                                    </button>
+
+                                    <button onclick="copyCodeCell('${cellId}')" class="neu-button px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1" title="Copy Code">
                                         <i class="fa-regular fa-copy"></i>
                                         <span>Copy</span>
                                     </button>
                                     
-                                    <button onclick="executeCodeCell('${cellId}', '${lang}')" id="run-btn-${cellId}" class="neu-button px-3.5 py-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5">
+                                    <button onclick="executeCodeCell('${cellId}', '${lang}')" id="run-btn-${cellId}" class="neu-button px-3.5 py-1 text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5">
                                         <i class="fa-solid fa-play text-[10px]"></i>
                                         <span>Run</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Code Editor (height set dynamically via JS after append) -->
-                            <textarea id="${cellId}" data-code="true" class="w-full font-mono text-xs p-4 bg-slate-950 text-emerald-300 border-none outline-none resize-y focus:ring-1 focus:ring-blue-500/50" spellcheck="false"></textarea>
+                            <!-- Code Block with Standard C++ / Python Syntax Highlighting -->
+                            <div class="relative group">
+                                <pre id="view-${cellId}" onclick="enableEditCodeCell('${cellId}')" class="p-4 font-mono text-xs overflow-x-auto rounded-b-xl leading-relaxed cursor-pointer select-text border-none" style="background: var(--code-bg); min-height: 60px;"><code class="language-${lang} hljs">${highlightCode(cleanCode, lang)}</code></pre>
+                                
+                                <textarea id="${cellId}" data-code="true" data-lang="${lang}" class="w-full font-mono text-xs p-4 bg-[var(--code-bg)] text-[var(--code-text)] border-none outline-none resize-y focus:ring-1 focus:ring-blue-500/50 hidden" spellcheck="false">${escapeHtml(cleanCode)}</textarea>
+                            </div>
 
                             <!-- Output Box -->
-                            <div id="output-${cellId}" class="hidden border-t border-slate-800 p-4 crt-terminal">
-                                <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono">
+                            <div id="output-${cellId}" class="hidden border-t border-[var(--border-color)] p-4 crt-terminal">
+                                <div class="flex items-center justify-between text-[11px] text-[var(--text-muted)] mb-2 border-b border-[var(--border-color)] pb-1 font-mono">
                                     <span><i class="fa-solid fa-terminal text-cyan-400 mr-1"></i> Output</span>
                                     <span id="time-${cellId}">0ms</span>
                                 </div>
-                                <pre id="text-${cellId}" class="text-xs font-mono whitespace-pre-wrap text-emerald-400">Executing...</pre>
+                                <pre id="text-${cellId}" class="text-xs font-mono whitespace-pre-wrap text-emerald-500 dark:text-emerald-400">Executing...</pre>
                             </div>
                         </div>
                     `;
@@ -923,11 +1009,19 @@
                     if (ta) {
                         ta.value = cleanMagicCommands(Array.isArray(cell.source) ? cell.source.join('') : cell.source);
                         autoResizeTextarea(ta);
-                        ta.addEventListener('input', () => autoResizeTextarea(ta));
+                        ta.addEventListener('input', () => {
+                            autoResizeTextarea(ta);
+                            updateHighlightedView(cellId);
+                        });
                     }
                 }
 
                 cellsContainer.appendChild(cellElement);
+            });
+
+            // Highlight all markdown code blocks
+            cellsContainer.querySelectorAll('.markdown-body pre code').forEach((block) => {
+                try { hljs.highlightElement(block); } catch (e) {}
             });
 
             // Render KaTeX math
@@ -1000,7 +1094,7 @@
             return 'python';
         }
 
-        // ===== LIVE CODE EXECUTION VIA PISTON API =====
+        // ===== LIVE CODE EXECUTION VIA JUDGE0 / WANDBOX API =====
         async function executeCodeCell(cellId, lang) {
             const codeEditor = document.getElementById(cellId);
             const outputBox = document.getElementById(`output-${cellId}`);
@@ -1011,71 +1105,94 @@
             if (!codeEditor) return;
 
             const codeToRun = codeEditor.value;
+            updateHighlightedView(cellId);
 
             outputBox.classList.remove('hidden');
             outputText.textContent = 'Compiling & executing on cloud server...';
-            outputText.className = 'text-xs font-mono text-amber-400 animate-subtle';
+            outputText.className = 'text-xs font-mono text-amber-500 dark:text-amber-400 animate-subtle';
             runBtn.disabled = true;
             runBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Running...`;
 
             const startTime = performance.now();
 
             try {
-                // Piston API: language must be 'c++' not 'cpp'
-                const pistonLang    = lang === 'cpp' ? 'c++' : 'python3';
-                const pistonVersion = lang === 'cpp' ? '10.2.0' : '3.10.0';
-                const fileName      = lang === 'cpp' ? 'main.cpp' : 'main.py';
-
-                const payload = {
-                    language: pistonLang,
-                    version:  pistonVersion,
-                    files: [{ name: fileName, content: codeToRun }]
-                };
-
-                // 15-second timeout
+                // Primary API: Judge0 CE
+                const judge0LangId = lang === 'cpp' ? 105 : 92; // 105: GCC 13.2.0, 92: Python 3.11.2
                 const ctrl = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 15000);
+                const timer = setTimeout(() => ctrl.abort(), 12000);
 
-                const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+                let res = await fetch('https://ce.judge0.com/submissions?wait=true', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify({
+                        language_id: judge0LangId,
+                        source_code: codeToRun
+                    }),
                     signal: ctrl.signal
-                });
+                }).catch(() => null);
+
                 clearTimeout(timer);
 
-                if (!res.ok) {
-                    throw new Error(`Server error ${res.status}: ${res.statusText}`);
+                if (res && res.ok) {
+                    const data = await res.json();
+                    const duration = Math.round(performance.now() - startTime);
+                    outputTime.textContent = `${duration}ms`;
+
+                    if (data.compile_output) {
+                        outputText.textContent = `[Compile Error]:\n${data.compile_output}`;
+                        outputText.className = 'text-xs font-mono text-red-500 dark:text-red-400';
+                    } else if (data.stderr && !data.stdout) {
+                        outputText.textContent = `[Runtime Error]:\n${data.stderr}`;
+                        outputText.className = 'text-xs font-mono text-red-500 dark:text-red-400';
+                    } else {
+                        const out = (data.stdout || '') + (data.stderr ? `\n[stderr]:\n${data.stderr}` : '');
+                        outputText.textContent = out.trim() || 'Executed successfully (no output).';
+                        outputText.className = data.stderr
+                            ? 'text-xs font-mono text-red-500 dark:text-red-400'
+                            : 'text-xs font-mono text-cyan-600 dark:text-cyan-300';
+                    }
+                    return;
                 }
+
+                // Secondary Fallback API: Wandbox
+                const wandboxCompiler = lang === 'cpp' ? 'gcc-head' : 'cpython-head';
+                const ctrl2 = new AbortController();
+                const timer2 = setTimeout(() => ctrl2.abort(), 12000);
+
+                res = await fetch('https://wandbox.org/api/compile.json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        compiler: wandboxCompiler,
+                        code: codeToRun
+                    }),
+                    signal: ctrl2.signal
+                });
+                clearTimeout(timer2);
+
+                if (!res.ok) throw new Error(`Server error ${res.status}`);
 
                 const data = await res.json();
                 const duration = Math.round(performance.now() - startTime);
                 outputTime.textContent = `${duration}ms`;
 
-                // API-level error (e.g. unknown language)
-                if (data.message) {
-                    outputText.textContent = `[API Error]: ${data.message}`;
-                    outputText.className = 'text-xs font-mono text-red-400';
-                } else if (data.compile && data.compile.code !== 0) {
-                    outputText.textContent = `[Compile Error]:\n${data.compile.stderr || data.compile.output}`;
-                    outputText.className = 'text-xs font-mono text-red-400';
-                } else if (data.run) {
-                    const stdout = data.run.stdout || '';
-                    const stderr = data.run.stderr || '';
-                    const output = stdout + (stderr ? `\n[stderr]:\n${stderr}` : '');
-                    outputText.textContent = output.trim() || 'Executed successfully (no output).';
-                    outputText.className = stderr ? 'text-xs font-mono text-red-400' : 'text-xs font-mono text-cyan-300';
+                if (data.compiler_error) {
+                    outputText.textContent = `[Compile Error]:\n${data.compiler_error}`;
+                    outputText.className = 'text-xs font-mono text-red-500 dark:text-red-400';
                 } else {
-                    outputText.textContent = JSON.stringify(data, null, 2);
-                    outputText.className = 'text-xs font-mono text-yellow-400';
+                    const out = (data.program_output || '') + (data.program_error ? `\n[stderr]:\n${data.program_error}` : '');
+                    outputText.textContent = out.trim() || 'Executed successfully (no output).';
+                    outputText.className = data.program_error
+                        ? 'text-xs font-mono text-red-500 dark:text-red-400'
+                        : 'text-xs font-mono text-cyan-600 dark:text-cyan-300';
                 }
 
             } catch (err) {
                 const msg = err.name === 'AbortError'
-                    ? 'Request timed out (15s). Check your internet connection or try Open in Colab.'
-                    : `Failed to reach execution engine:\n${err.message}\n\nTip: Click "Colab" to run on Google Colab instead!`;
+                    ? 'Request timed out (12s). Check your connection or click Open in Colab.'
+                    : `Execution engine unreachable: ${err.message}\n\nTip: Click "Colab" to run on Google Colab!`;
                 outputText.textContent = msg;
-                outputText.className = 'text-xs font-mono text-red-400';
+                outputText.className = 'text-xs font-mono text-red-500 dark:text-red-400';
             } finally {
                 runBtn.disabled = false;
                 runBtn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Run`;
