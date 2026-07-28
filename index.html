@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Bible — Master Data Structures & Algorithms</title>
+    <meta name="description" content="Interactive DSA learning platform with Jupyter notebook viewer, live C++ & Python code execution, progress tracking, and Google Colab integration.">
+    <!-- Tailwind CSS v4 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- KaTeX for Math Equations -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css" id="highlight-theme">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== DESIGN TOKENS ===== */
+        :root {
+            --bg-color: #e6edf8;
+            --surface-color: #e6edf8;
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --border-color: #d1dbe8;
+            --neu-shadow-dark: #b8c4d8;
+            --neu-shadow-light: #ffffff;
+            --card-bg: #e6edf8;
+            --code-bg: #1e222d;
+            --code-text: #e2e8f0;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #10b981;
+            --accent-heart: #ef4444;
+        }
+
+        .dark {
+            --bg-color: #141824;
+            --surface-color: #141824;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-color: #1e2638;
+            --neu-shadow-dark: #0d1018;
+            --neu-shadow-light: #1b2030;
+            --card-bg: #141824;
+            --code-bg: #0d1017;
+            --code-text: #f1f5f9;
+            --accent-primary: #60a5fa;
+            --accent-secondary: #34d399;
+            --accent-heart: #f87171;
+        }
+
+        * { font-family: 'Inter', system-ui, sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ===== NEUMORPHIC UTILITIES ===== */
+        .neu-flat {
+            background: var(--surface-color);
+            box-shadow: 6px 6px 14px var(--neu-shadow-dark), -6px -6px 14px var(--neu-shadow-light);
+            border-radius: 16px;
+        }
+
+        .neu-pressed {
+            background: var(--surface-color);
+            box-shadow: inset 4px 4px 8px var(--neu-shadow-dark), inset -4px -4px 8px var(--neu-shadow-light);
+            border-radius: 12px;
+        }
+
+        .neu-button {
+            background: var(--surface-color);
+            box-shadow: 5px 5px 10px var(--neu-shadow-dark), -5px -5px 10px var(--neu-shadow-light);
+            border-radius: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+            border: none;
+        }
+
+        .neu-button:hover {
+            box-shadow: 7px 7px 14px var(--neu-shadow-dark), -7px -7px 14px var(--neu-shadow-light);
+            transform: translateY(-1px);
+        }
+
+        .neu-button:active, .neu-button.active {
+            box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
+            transform: translateY(1px);
+        }
+
+        .neu-pill {
+            background: var(--surface-color);
+            box-shadow: 3px 3px 6px var(--neu-shadow-dark), -3px -3px 6px var(--neu-shadow-light);
+            border-radius: 9999px;
+        }
+
+        .neu-input {
+            background: var(--surface-color);
+            box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
+            border: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .neu-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* ===== HEART BUTTON ===== */
+        .neu-heart-btn {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: var(--surface-color);
+            box-shadow: 5px 5px 12px var(--neu-shadow-dark), -5px -5px 12px var(--neu-shadow-light);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .neu-heart-btn:hover { transform: scale(1.05); }
+
+        .neu-heart-btn.is-favorite {
+            box-shadow: inset 3px 3px 6px var(--neu-shadow-dark), inset -3px -3px 6px var(--neu-shadow-light);
+        }
+
+        .neu-heart-btn i {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            transition: color 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .neu-heart-btn.is-favorite i {
+            color: var(--accent-heart);
+            transform: scale(1.18);
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--surface-color); }
+        ::-webkit-scrollbar-thumb { background: var(--neu-shadow-dark); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* ===== MARKDOWN BODY ===== */
+        .markdown-body h1 { font-size: 1.85rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+        .markdown-body h2 { font-size: 1.45rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
+        .markdown-body h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .markdown-body h4 { font-size: 1.05rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.4rem; }
+        .markdown-body p { margin-bottom: 0.85rem; line-height: 1.7; }
+        .markdown-body ul, .markdown-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        .markdown-body ul { list-style-type: disc; }
+        .markdown-body ol { list-style-type: decimal; }
+        .markdown-body li { margin-bottom: 0.35rem; line-height: 1.6; }
+        .markdown-body blockquote { border-left: 4px solid var(--accent-primary); padding-left: 1rem; color: var(--text-muted); font-style: italic; margin-bottom: 1rem; }
+        .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; overflow-x: auto; display: block; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border-color); padding: 0.5rem 0.8rem; text-align: left; }
+        .markdown-body th { background: rgba(0,0,0,0.05); font-weight: 600; }
+        .markdown-body code:not(pre code) { background: rgba(100, 116, 139, 0.15); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.875em; color: var(--accent-primary); }
+        .markdown-body pre { margin-bottom: 1rem; border-radius: 10px; overflow-x: auto; }
+        .markdown-body strong { font-weight: 700; }
+        .markdown-body em { font-style: italic; }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
+
+        /* ===== CODE OUTPUT TERMINAL ===== */
+        .crt-terminal {
+            background-color: var(--code-bg);
+            color: #38bdf8;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 12px;
+            box-shadow: inset 3px 3px 8px #05070a, inset -3px -3px 8px #151a28;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes subtle-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-subtle { animation: subtle-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.3s ease forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- ========== TOP NAVBAR ========== -->
+    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-[var(--surface-color)]/90 border-b border-[var(--border-color)] px-4 lg:px-8 py-3 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Brand / Logo -->
+            <div class="flex items-center gap-3">
+                <button id="toggle-sidebar-btn" class="lg:hidden neu-button p-2.5 text-[var(--text-main)] hover:text-blue-500">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="loadRepoOverview()">
+                    <div class="w-10 h-10 neu-pill flex items-center justify-center text-blue-500 text-xl font-black">
+                        <i class="fa-solid fa-code"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base lg:text-lg tracking-tight leading-none flex items-center gap-2">
+                            <span>DSA Bible</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 font-semibold border border-blue-500/20">Notes</span>
+                        </h1>
+                        <p class="text-xs text-[var(--text-muted)] font-medium">Data Structures & Algorithms Hub</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Bar in Header -->
+            <div class="hidden md:flex flex-1 max-w-md relative mx-4">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm"></i>
+                <input type="text" id="global-search" placeholder="Search topics, arrays, pointers, DP, graphs..." 
+                       class="w-full pl-10 pr-4 py-2 text-sm rounded-xl neu-input text-[var(--text-main)] placeholder-[var(--text-muted)]">
+            </div>
+
+            <!-- Right Controls -->
+            <div class="flex items-center gap-2 lg:gap-3">
+                
+                <!-- Live Playground -->
+                <button onclick="openPlaygroundModal()" class="neu-button px-3.5 py-2 text-xs lg:text-sm font-semibold flex items-center gap-2 text-emerald-500 hover:text-emerald-400" title="Open Code Sandbox">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span class="hidden sm:inline">Sandbox</span>
+                </button>
+
+                <!-- Favorites Drawer -->
+                <button onclick="toggleFavoritesDrawer()" class="neu-button relative p-2.5 text-[var(--text-main)] hover:text-red-500" title="View Starred Notebooks">
+                    <i class="fa-solid fa-heart text-base text-red-400"></i>
+                    <span id="fav-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
+                </button>
+
+                <!-- GitHub Repo External Link -->
+                <a href="https://github.com/muhammadanas20/Data-Structures-Algorithms" target="_blank" rel="noopener noreferrer" 
+                   class="neu-button px-3 py-2 text-xs lg:text-sm font-semibold flex items-center gap-2 text-[var(--text-main)] hover:text-blue-400" title="View Source on GitHub">
+                    <i class="fa-brands fa-github text-base"></i>
+                    <span class="hidden xl:inline">GitHub</span>
+                </a>
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="neu-button p-2.5 text-[var(--text-main)] hover:text-amber-400" title="Toggle Light/Dark Theme">
+                    <i class="fa-solid fa-moon text-base" id="theme-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Field -->
+        <div class="md:hidden mt-3 px-1">
+            <div class="relative w-full">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm"></i>
+                <input type="text" id="mobile-search" placeholder="Search algorithms & notes..." 
+                       class="w-full pl-10 pr-4 py-2 text-sm rounded-xl neu-input text-[var(--text-main)] placeholder-[var(--text-muted)]">
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== MAIN APP CONTAINER ========== -->
+    <div class="flex-1 max-w-7xl w-full mx-auto flex gap-6 p-4 lg:p-6 overflow-hidden">
+        
+        <!-- SIDEBAR: PHASE DIRECTORY NAVIGATOR -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-80 lg:w-72 bg-[var(--surface-color)] lg:bg-transparent transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0 p-4 lg:p-0 overflow-y-auto">
+            
+            <div class="neu-flat p-4 mb-4 flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-sm uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+                        <i class="fa-solid fa-folder-tree text-blue-500"></i> Curriculum Phases
+                    </h2>
+                    <span id="completion-stat" class="text-xs font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">0% Done</span>
+                </div>
+                
+                <!-- Overall Progress Bar -->
+                <div class="w-full bg-slate-700/20 h-2 rounded-full overflow-hidden p-0.5 neu-pressed">
+                    <div id="progress-bar-fill" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Phase List Accordion Container -->
+            <div id="phase-list" class="flex flex-col gap-3 pb-8">
+                <!-- Dynamically Rendered Phase Items -->
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW CONTENT AREA -->
+        <main class="flex-1 min-w-0 flex flex-col gap-6">
+            
+            <!-- NOTEBOOK ACTIONS HEADER -->
+            <div id="notebook-header-container" class="neu-flat p-5 flex flex-col gap-4 relative overflow-hidden hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
+                    <div class="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+                        <span id="nb-phase-label" class="font-semibold text-blue-500">Phase 00</span>
+                        <span>/</span>
+                        <span id="nb-filename-label" class="font-mono text-[var(--text-main)] font-semibold">notebook.ipynb</span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        
+                        <!-- Open in Google Colab -->
+                        <a id="colab-link-btn" href="#" target="_blank" rel="noopener noreferrer" 
+                           class="neu-button px-3.5 py-1.5 text-xs font-bold text-amber-500 hover:text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>Open in Colab</span>
+                        </a>
+
+                        <!-- Open in MyBinder -->
+                        <a id="binder-link-btn" href="#" target="_blank" rel="noopener noreferrer" 
+                           class="neu-button px-3.5 py-1.5 text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-2 hidden sm:flex">
+                            <i class="fa-solid fa-cubes"></i>
+                            <span>Binder</span>
+                        </a>
+
+                        <!-- GitHub Source View -->
+                        <a id="github-link-btn" href="#" target="_blank" rel="noopener noreferrer" 
+                           class="neu-button p-2 text-xs text-[var(--text-muted)] hover:text-white" title="View Source Notebook on GitHub">
+                            <i class="fa-brands fa-github text-sm"></i>
+                        </a>
+
+                        <!-- Favorite Heart Toggle -->
+                        <div id="favorite-toggle-btn" class="neu-heart-btn" onclick="toggleCurrentNotebookFavorite()" title="Add to Favorites">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 id="nb-title-display" class="text-xl lg:text-2xl font-extrabold text-[var(--text-main)] tracking-tight">Notebook Title</h2>
+                        <p id="nb-desc-display" class="text-xs lg:text-sm text-[var(--text-muted)] mt-1">Interactive C++ & DSA concepts with live execution cells.</p>
+                    </div>
+
+                    <!-- Mark as Completed Toggle -->
+                    <button id="mark-complete-btn" onclick="toggleNotebookCompletion()" class="neu-button px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-[var(--text-muted)]">
+                        <i class="fa-regular fa-circle-check"></i>
+                        <span>Mark Done</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NOTEBOOK DISPLAY CONTAINER -->
+            <div id="main-content-display" class="neu-flat p-6 min-h-[500px] flex flex-col relative">
+                
+                <!-- Welcome Dashboard -->
+                <div id="welcome-view" class="my-auto py-12 flex flex-col items-center justify-center text-center px-4 max-w-2xl mx-auto">
+                    <div class="w-20 h-20 neu-pill flex items-center justify-center text-blue-500 text-3xl mb-6 shadow-lg">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="text-2xl lg:text-3xl font-extrabold text-[var(--text-main)] mb-3">Master Data Structures & Algorithms</h2>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed mb-8">
+                        Explore clean Jupyter Notebook notes covering Phase 00 (C++ Programming Refresh) through Phase 06 (Advanced Competitive Programming). 
+                        Click any notebook in the sidebar to render it inline — or open it directly in Google Colab.
+                    </p>
+
+                    <!-- Feature Pills -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-left mb-8">
+                        <div class="neu-pressed p-4 rounded-xl flex flex-col gap-1">
+                            <i class="fa-solid fa-play text-emerald-400 text-lg mb-1"></i>
+                            <h4 class="font-bold text-xs text-[var(--text-main)]">Live Code Execution</h4>
+                            <p class="text-[11px] text-[var(--text-muted)]">Run C++ & Python cells right in the browser using Piston API.</p>
+                        </div>
+                        <div class="neu-pressed p-4 rounded-xl flex flex-col gap-1">
+                            <i class="fa-solid fa-bolt text-amber-400 text-lg mb-1"></i>
+                            <h4 class="font-bold text-xs text-[var(--text-main)]">Colab & Binder</h4>
+                            <p class="text-[11px] text-[var(--text-muted)]">1-click launchers to run notebooks on Google Colab or MyBinder.</p>
+                        </div>
+                        <div class="neu-pressed p-4 rounded-xl flex flex-col gap-1">
+                            <i class="fa-solid fa-chart-line text-blue-400 text-lg mb-1"></i>
+                            <h4 class="font-bold text-xs text-[var(--text-main)]">Progress Tracking</h4>
+                            <p class="text-[11px] text-[var(--text-muted)]">Mark notebooks done, bookmark favorites — all saved locally.</p>
+                        </div>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="flex items-center justify-center gap-8 mb-8 text-center">
+                        <div>
+                            <div class="text-2xl font-extrabold text-blue-500">7</div>
+                            <div class="text-xs text-[var(--text-muted)]">Learning Phases</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-extrabold text-emerald-500">26</div>
+                            <div class="text-xs text-[var(--text-muted)]">Notebooks</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-extrabold text-purple-500">100+</div>
+                            <div class="text-xs text-[var(--text-muted)]">Topics Covered</div>
+                        </div>
+                    </div>
+
+                    <button onclick="selectFirstNotebook()" class="neu-button px-6 py-3 text-sm font-bold text-blue-500 hover:text-blue-400 flex items-center gap-2">
+                        <span>Start Learning → Phase 00</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-spinner" class="hidden absolute inset-0 bg-[var(--surface-color)]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-3">
+                    <div class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+                    <p class="text-xs font-semibold text-[var(--text-muted)] animate-subtle">Fetching & parsing notebook cells...</p>
+                </div>
+
+                <!-- Notebook Cells Container -->
+                <div id="cells-container" class="space-y-6 hidden"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ========== FAVORITES SIDE DRAWER ========== -->
+    <div id="favorites-drawer" class="fixed inset-y-0 right-0 z-50 w-80 lg:w-96 bg-[var(--surface-color)] shadow-2xl border-l border-[var(--border-color)] transform translate-x-full transition-transform duration-300 ease-in-out p-5 flex flex-col">
+        <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-3 mb-4">
+            <h3 class="font-bold text-base flex items-center gap-2 text-[var(--text-main)]">
+                <i class="fa-solid fa-heart text-red-400"></i> Favorite Notebooks
+            </h3>
+            <button onclick="toggleFavoritesDrawer()" class="neu-button p-2 text-xs text-[var(--text-muted)] hover:text-red-400">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <div id="favorites-list" class="flex-1 overflow-y-auto space-y-3 pr-1">
+            <p id="no-favorites-msg" class="text-xs text-[var(--text-muted)] text-center py-8">
+                No bookmarked notebooks yet.<br>Click the heart icon on any notebook to save it here!
+            </p>
+        </div>
+    </div>
+
+    <!-- ========== CODE SANDBOX / PLAYGROUND MODAL ========== -->
+    <div id="playground-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="neu-flat w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden bg-[var(--surface-color)] p-6 gap-4 border border-[var(--border-color)]">
+            <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-emerald-400 text-lg"></i>
+                    <h3 class="font-bold text-base text-[var(--text-main)]">Interactive C++ / Python Playground</h3>
+                </div>
+                <button onclick="closePlaygroundModal()" class="neu-button p-2 text-xs text-[var(--text-muted)] hover:text-red-400">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2">
+                    <label class="font-semibold text-[var(--text-muted)]">Language:</label>
+                    <select id="sandbox-lang" class="neu-input px-3 py-1 rounded-lg font-mono text-[var(--text-main)] bg-[var(--surface-color)]">
+                        <option value="cpp">C++ (GCC 10.2 / C++17)</option>
+                        <option value="python">Python 3 (v3.10)</option>
+                    </select>
+                </div>
+                <button onclick="runSandboxCode()" id="run-sandbox-btn" class="neu-button px-4 py-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Execute Code</span>
+                </button>
+            </div>
+
+            <!-- Code Editor Area -->
+            <textarea id="sandbox-editor" class="w-full h-52 font-mono text-xs p-3 neu-pressed text-emerald-400 bg-slate-950 rounded-xl resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500" spellcheck="false">#include <iostream>
+using namespace std;
+
+int main() {
+    int val = 42;
+    int* ptr = &val;
+    cout << "Value: " << val << endl;
+    cout << "Memory Address: " << ptr << endl;
+    cout << "Dereferenced Pointer: " << *ptr << endl;
+    return 0;
+}</textarea>
+
+            <!-- Output Terminal -->
+            <div class="flex flex-col gap-1">
+                <span class="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Output Terminal</span>
+                <pre id="sandbox-output" class="crt-terminal p-3 text-xs min-h-[100px] max-h-40 overflow-y-auto font-mono text-cyan-300">Ready to run code...</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== JAVASCRIPT APP LOGIC ========== -->
+    <script>
+        // ===== REPOSITORY CONFIG =====
+        const REPO_CONFIG = {
+            owner: 'muhammadanas20',
+            repo: 'Data-Structures-Algorithms',
+            branch: 'master',
+            rawBaseUrl: 'https://raw.githubusercontent.com/muhammadanas20/Data-Structures-Algorithms/master',
+            githubBaseUrl: 'https://github.com/muhammadanas20/Data-Structures-Algorithms/blob/master',
+            colabBaseUrl: 'https://colab.research.google.com/github/muhammadanas20/Data-Structures-Algorithms/blob/master',
+            binderBaseUrl: 'https://mybinder.org/v2/gh/muhammadanas20/Data-Structures-Algorithms/master?filepath='
+        };
+
+        // ===== CURRICULUM DATA (Exact filenames from repo) =====
+        const CURRICULUM_DATA = [
+            {
+                phaseId: 'Phase_00_Programming_Refresh',
+                title: 'Phase 00: Programming Refresh',
+                description: 'C++ Pointers, Classes, Memory Management, STL',
+                icon: 'fa-code',
+                color: '#6366f1',
+                notebooks: [
+                    { name: '01_Pointers_and_References.ipynb', title: '01. Pointers & References', path: 'Phase_00_Programming_Refresh/01_Pointers_and_References.ipynb' },
+                    { name: '02_Classes_and_Memory.ipynb', title: '02. Classes & Memory', path: 'Phase_00_Programming_Refresh/02_Classes_and_Memory.ipynb' },
+                    { name: '03_STL_Deep_Dive.ipynb', title: '03. STL Deep Dive', path: 'Phase_00_Programming_Refresh/03_STL_Deep_Dive.ipynb' }
+                ]
+            },
+            {
+                phaseId: 'Phase_01_Foundations',
+                title: 'Phase 01: Foundations',
+                description: 'Time & Space Complexity, Recursion, Backtracking',
+                icon: 'fa-layer-group',
+                color: '#8b5cf6',
+                notebooks: [
+                    { name: '01_Complexity_Analysis.ipynb', title: '01. Complexity Analysis (Big-O)', path: 'Phase_01_Foundations/01_Complexity_Analysis.ipynb' },
+                    { name: '02_Recursion.ipynb', title: '02. Recursion & Call Stack', path: 'Phase_01_Foundations/02_Recursion.ipynb' },
+                    { name: '03_Backtracking.ipynb', title: '03. Backtracking Techniques', path: 'Phase_01_Foundations/03_Backtracking.ipynb' }
+                ]
+            },
+            {
+                phaseId: 'Phase_02_Fundamental_Linear',
+                title: 'Phase 02: Fundamental Linear',
+                description: 'Arrays, Sorting, Hashing, Strings, Linked Lists, Stacks, Queues',
+                icon: 'fa-list-ol',
+                color: '#ec4899',
+                notebooks: [
+                    { name: '01_Arrays_and_Two_Pointers.ipynb', title: '01. Arrays & Two Pointers', path: 'Phase_02_Fundamental_Linear/01_Arrays_and_Two_Pointers.ipynb' },
+                    { name: '02_Sliding_Window_and_Prefix_Sum.ipynb', title: '02. Sliding Window & Prefix Sum', path: 'Phase_02_Fundamental_Linear/02_Sliding_Window_and_Prefix_Sum.ipynb' },
+                    { name: '03_Hashing_and_Binary_Search.ipynb', title: '03. Hashing & Binary Search', path: 'Phase_02_Fundamental_Linear/03_Hashing_and_Binary_Search.ipynb' },
+                    { name: '04_Sorting_Algorithms.ipynb', title: '04. Sorting Algorithms', path: 'Phase_02_Fundamental_Linear/04_Sorting_Algorithms.ipynb' },
+                    { name: '05_Bit_Manipulation.ipynb', title: '05. Bit Manipulation & Tricks', path: 'Phase_02_Fundamental_Linear/05_Bit_Manipulation.ipynb' },
+                    { name: '06_String_Algorithms.ipynb', title: '06. String Algorithms & KMP', path: 'Phase_02_Fundamental_Linear/06_String_Algorithms.ipynb' },
+                    { name: '07_Linked_Lists.ipynb', title: '07. Linked Lists', path: 'Phase_02_Fundamental_Linear/07_Linked_Lists.ipynb' },
+                    { name: '08_Stacks_Queues_Deques.ipynb', title: '08. Stacks, Queues & Deques', path: 'Phase_02_Fundamental_Linear/08_Stacks_Queues_Deques.ipynb' }
+                ]
+            },
+            {
+                phaseId: 'Phase_03_Hierarchical_Structures',
+                title: 'Phase 03: Hierarchical Structures',
+                description: 'Trees, Heaps, BST, Self-Balancing, Segment Trees',
+                icon: 'fa-sitemap',
+                color: '#f97316',
+                notebooks: [
+                    { name: '01_Heaps_and_Priority_Queues.ipynb', title: '01. Heaps & Priority Queues', path: 'Phase_03_Hierarchical_Structures/01_Heaps_and_Priority_Queues.ipynb' },
+                    { name: '02_Trees_and_BST.ipynb', title: '02. Trees & Binary Search Trees', path: 'Phase_03_Hierarchical_Structures/02_Trees_and_BST.ipynb' },
+                    { name: '03_Tree_DFS_BFS.ipynb', title: '03. Tree DFS & BFS Traversals', path: 'Phase_03_Hierarchical_Structures/03_Tree_DFS_BFS.ipynb' },
+                    { name: '04_Self_Balancing_and_Tries.ipynb', title: '04. Self-Balancing Trees & Tries', path: 'Phase_03_Hierarchical_Structures/04_Self_Balancing_and_Tries.ipynb' },
+                    { name: '05_Segment_and_Fenwick_Trees.ipynb', title: '05. Segment & Fenwick Trees', path: 'Phase_03_Hierarchical_Structures/05_Segment_and_Fenwick_Trees.ipynb' }
+                ]
+            },
+            {
+                phaseId: 'Phase_04_Graph_Theory',
+                title: 'Phase 04: Graph Theory',
+                description: 'BFS, DFS, Dijkstra, Bellman-Ford, Kruskal, Prim, Topological Sort',
+                icon: 'fa-diagram-project',
+                color: '#14b8a6',
+                notebooks: [
+                    { name: '01_Representations_DFS_BFS.ipynb', title: '01. Graph Representations, DFS & BFS', path: 'Phase_04_Graph_Theory/01_Representations_DFS_BFS.ipynb' },
+                    { name: '02_Topological_Sort_and_DSU.ipynb', title: '02. Topological Sort & DSU', path: 'Phase_04_Graph_Theory/02_Topological_Sort_and_DSU.ipynb' },
+                    { name: '03_Shortest_Paths.ipynb', title: '03. Shortest Path Algorithms', path: 'Phase_04_Graph_Theory/03_Shortest_Paths.ipynb' },
+                    { name: '04_Minimum_Spanning_Trees.ipynb', title: '04. Minimum Spanning Trees', path: 'Phase_04_Graph_Theory/04_Minimum_Spanning_Trees.ipynb' }
+                ]
+            },
+            {
+                phaseId: 'Phase_05_Algorithmic_Paradigms',
+                title: 'Phase 05: Algorithmic Paradigms',
+                description: 'Greedy, Divide & Conquer, Dynamic Programming',
+                icon: 'fa-brain',
+                color: '#22c55e',
+                notebooks: [
+                    { name: '01_Greedy_Algorithms.ipynb', title: '01. Greedy Algorithms', path: 'Phase_05_Algorithmic_Paradigms/01_Greedy_Algorithms.ipynb' },
+                    { name: '02_Dynamic_Programming_Foundations.ipynb', title: '02. DP Foundations', path: 'Phase_05_Algorithmic_Paradigms/02_Dynamic_Programming_Foundations.ipynb' },
+                    { name: '03_Classic_DP_Models.ipynb', title: '03. Classic DP Models', path: 'Phase_05_Algorithmic_Paradigms/03_Classic_DP_Models.ipynb' }
+                ]
+            },
+            {
+                phaseId: 'Phase_06_Advanced_and_CP',
+                title: 'Phase 06: Advanced & CP',
+                description: 'Advanced Graphs, DP Optimizations, Competitive Programming',
+                icon: 'fa-trophy',
+                color: '#eab308',
+                notebooks: [
+                    { name: '01_Advanced_Graph_Flows_SCC.ipynb', title: '01. Advanced Graph Flows & SCC', path: 'Phase_06_Advanced_and_CP/01_Advanced_Graph_Flows_SCC.ipynb' },
+                    { name: '02_Advanced_DP_Optimizations.ipynb', title: '02. Advanced DP Optimizations', path: 'Phase_06_Advanced_and_CP/02_Advanced_DP_Optimizations.ipynb' },
+                    { name: '03_Competitive_Programming_Math_HLD.ipynb', title: '03. CP Math & HLD', path: 'Phase_06_Advanced_and_CP/03_Competitive_Programming_Math_HLD.ipynb' }
+                ]
+            }
+        ];
+
+        // ===== APP STATE =====
+        let currentNotebookPath = null;
+        let currentNotebookData = null;
+        let activePhaseIndex = 0;
+        let favorites = JSON.parse(localStorage.getItem('dsa_favorites') || '[]');
+        let completedNotebooks = JSON.parse(localStorage.getItem('dsa_completed') || '[]');
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            renderSidebarPhases();
+            updateProgressStats();
+            updateFavoritesBadge();
+            setupSearchListeners();
+            setupSidebarMobileToggle();
+            
+            // Try to discover additional notebooks from GitHub API
+            syncWithGitHubRepo();
+
+            // Restore from URL hash
+            const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+            if (hash) {
+                loadNotebook(hash);
+            }
+        });
+
+        // ===== GITHUB REPO SYNC =====
+        async function syncWithGitHubRepo() {
+            try {
+                const apiUrl = `https://api.github.com/repos/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}/git/trees/${REPO_CONFIG.branch}?recursive=1`;
+                const response = await fetch(apiUrl);
+                if (!response.ok) return;
+
+                const data = await response.json();
+                if (!data.tree) return;
+
+                const discoveredFiles = data.tree.filter(item => item.path.endsWith('.ipynb'));
+                
+                discoveredFiles.forEach(file => {
+                    const parts = file.path.split('/');
+                    if (parts.length < 2) return;
+                    const folderName = parts[0];
+                    const fileName = parts[1];
+
+                    let phaseObj = CURRICULUM_DATA.find(p => p.phaseId === folderName);
+                    if (phaseObj) {
+                        const exists = phaseObj.notebooks.some(n => n.path === file.path);
+                        if (!exists) {
+                            const formattedTitle = fileName.replace('.ipynb', '').replace(/_/g, ' ');
+                            phaseObj.notebooks.push({ name: fileName, title: formattedTitle, path: file.path });
+                        }
+                    }
+                });
+
+                renderSidebarPhases();
+                updateProgressStats();
+            } catch (err) {
+                console.log('GitHub sync: using pre-indexed curriculum data.', err);
+            }
+        }
+
+        // ===== THEME TOGGLE =====
+        function initTheme() {
+            const savedTheme = localStorage.getItem('dsa_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-sun text-amber-400';
+            } else {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-icon').className = 'fa-solid fa-moon text-blue-400';
+            }
+
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('dsa_theme', isDark ? 'dark' : 'light');
+                document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-moon text-blue-400' : 'fa-solid fa-sun text-amber-400';
+            });
+        }
+
+        // ===== RENDER SIDEBAR =====
+        function renderSidebarPhases(filterQuery = '') {
+            const phaseListContainer = document.getElementById('phase-list');
+            phaseListContainer.innerHTML = '';
+
+            CURRICULUM_DATA.forEach((phase, phaseIdx) => {
+                const filteredNotebooks = phase.notebooks.filter(nb => 
+                    nb.title.toLowerCase().includes(filterQuery.toLowerCase()) || 
+                    nb.path.toLowerCase().includes(filterQuery.toLowerCase())
+                );
+
+                if (filterQuery && filteredNotebooks.length === 0) return;
+
+                const isPhaseExpanded = phaseIdx === activePhaseIndex || filterQuery.length > 0;
+
+                const phaseCard = document.createElement('div');
+                phaseCard.className = 'neu-flat p-3 transition-all duration-200';
+                
+                phaseCard.innerHTML = `
+                    <button onclick="togglePhase(${phaseIdx})" class="w-full flex items-center justify-between text-left py-1 group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <i class="fa-solid ${phase.icon} text-sm" style="color:${phase.color}"></i>
+                            <span class="font-bold text-xs text-[var(--text-main)] group-hover:text-blue-500 transition-colors truncate">
+                                ${phase.title}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-[10px] text-[var(--text-muted)] font-mono">${filteredNotebooks.length}</span>
+                            <i class="fa-solid fa-chevron-down text-xs text-[var(--text-muted)] transition-transform duration-200 ${isPhaseExpanded ? 'rotate-180' : ''}"></i>
+                        </div>
+                    </button>
+
+                    <div id="phase-content-${phaseIdx}" class="${isPhaseExpanded ? 'block' : 'hidden'} mt-2 pt-2 border-t border-[var(--border-color)] space-y-1">
+                        ${filteredNotebooks.map(nb => {
+                            const isFav = favorites.includes(nb.path);
+                            const isDone = completedNotebooks.includes(nb.path);
+                            const isActive = currentNotebookPath === nb.path;
+
+                            return `
+                                <div class="flex items-center justify-between p-2 rounded-lg ${isActive ? 'neu-pressed text-blue-500 font-semibold' : 'hover:bg-black/5 dark:hover:bg-white/5 text-[var(--text-muted)]'} text-xs cursor-pointer group"
+                                     onclick="loadNotebook('${nb.path}')">
+                                    <div class="flex items-center gap-2 truncate pr-2">
+                                        <i class="fa-solid ${isDone ? 'fa-circle-check text-emerald-400' : 'fa-book-open text-slate-400'} text-[11px]"></i>
+                                        <span class="truncate hover:text-[var(--text-main)] transition-colors" title="${nb.title}">${nb.title}</span>
+                                    </div>
+                                    <button onclick="event.stopPropagation(); toggleFavorite('${nb.path}')" class="p-1 hover:text-red-400 transition-colors shrink-0" title="Bookmark">
+                                        <i class="fa-${isFav ? 'solid text-red-500' : 'regular text-slate-500'} fa-heart text-[11px]"></i>
+                                    </button>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+
+                phaseListContainer.appendChild(phaseCard);
+            });
+        }
+
+        function togglePhase(phaseIdx) {
+            activePhaseIndex = activePhaseIndex === phaseIdx ? -1 : phaseIdx;
+            renderSidebarPhases();
+        }
+
+        function selectFirstNotebook() {
+            if (CURRICULUM_DATA[0] && CURRICULUM_DATA[0].notebooks[0]) {
+                loadNotebook(CURRICULUM_DATA[0].notebooks[0].path);
+            }
+        }
+
+        // ===== LOAD NOTEBOOK FROM GITHUB RAW =====
+        async function loadNotebook(path) {
+            currentNotebookPath = path;
+            window.location.hash = encodeURIComponent(path);
+
+            const welcomeView = document.getElementById('welcome-view');
+            const headerContainer = document.getElementById('notebook-header-container');
+            const cellsContainer = document.getElementById('cells-container');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            welcomeView.classList.add('hidden');
+            cellsContainer.classList.add('hidden');
+            loadingSpinner.classList.remove('hidden');
+
+            // Find Phase & Title metadata
+            let currentNbMeta = null;
+            let currentPhaseMeta = null;
+            CURRICULUM_DATA.forEach(p => {
+                const found = p.notebooks.find(n => n.path === path);
+                if (found) {
+                    currentNbMeta = found;
+                    currentPhaseMeta = p;
+                }
+            });
+
+            // Update Header
+            headerContainer.classList.remove('hidden');
+            document.getElementById('nb-phase-label').textContent = currentPhaseMeta ? currentPhaseMeta.title : 'Phase';
+            document.getElementById('nb-filename-label').textContent = path.split('/').pop();
+            document.getElementById('nb-title-display').textContent = currentNbMeta ? currentNbMeta.title : path.split('/').pop();
+            
+            // Set External Links
+            document.getElementById('colab-link-btn').href = `${REPO_CONFIG.colabBaseUrl}/${path}`;
+            document.getElementById('binder-link-btn').href = `${REPO_CONFIG.binderBaseUrl}${path}`;
+            document.getElementById('github-link-btn').href = `${REPO_CONFIG.githubBaseUrl}/${path}`;
+
+            updateHeaderButtonsState();
+            renderSidebarPhases();
+
+            try {
+                const response = await fetch(`${REPO_CONFIG.rawBaseUrl}/${path}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const notebookJson = await response.json();
+                currentNotebookData = notebookJson;
+                renderNotebookCells(notebookJson);
+            } catch (error) {
+                renderFallbackNotebookContent(currentNbMeta, path);
+            } finally {
+                loadingSpinner.classList.add('hidden');
+                cellsContainer.classList.remove('hidden');
+                cellsContainer.classList.add('fade-in');
+            }
+        }
+
+        // ===== RENDER NOTEBOOK CELLS =====
+        function renderNotebookCells(nbData) {
+            const cellsContainer = document.getElementById('cells-container');
+            cellsContainer.innerHTML = '';
+
+            if (!nbData.cells || nbData.cells.length === 0) {
+                cellsContainer.innerHTML = `<div class="p-6 text-center text-xs text-[var(--text-muted)]">No cells found in this notebook.</div>`;
+                return;
+            }
+
+            nbData.cells.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.className = 'flex flex-col gap-2';
+
+                if (cell.cell_type === 'markdown') {
+                    const rawMarkdown = Array.isArray(cell.source) ? cell.source.join('') : cell.source;
+                    const renderedHtml = marked.parse(rawMarkdown);
+
+                    cellElement.innerHTML = `
+                        <div class="neu-flat p-5 text-sm markdown-body text-[var(--text-main)] leading-relaxed">
+                            ${renderedHtml}
+                        </div>
+                    `;
+                } else if (cell.cell_type === 'code') {
+                    const rawCode = Array.isArray(cell.source) ? cell.source.join('') : cell.source;
+                    const cellId = `code-cell-${index}`;
+                    const lang = detectCodeLanguage(rawCode);
+                    const cleanCode = cleanMagicCommands(rawCode);
+
+                    cellElement.innerHTML = `
+                        <div class="neu-flat overflow-hidden border border-slate-700/30 rounded-2xl">
+                            <!-- Cell Header Bar -->
+                            <div class="flex items-center justify-between bg-slate-900/40 px-4 py-2.5 border-b border-slate-700/30 text-xs">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono text-[11px] text-blue-400 font-bold">In [${index + 1}]:</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-400 font-semibold border border-blue-500/20 uppercase">
+                                        ${lang}
+                                    </span>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <button onclick="copyCodeCell('${cellId}')" class="neu-button px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:text-white flex items-center gap-1" title="Copy Code">
+                                        <i class="fa-regular fa-copy"></i>
+                                        <span>Copy</span>
+                                    </button>
+                                    
+                                    <button onclick="executeCodeCell('${cellId}', '${lang}')" id="run-btn-${cellId}" class="neu-button px-3.5 py-1 text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-play text-[10px]"></i>
+                                        <span>Run</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Code Editor -->
+                            <textarea id="${cellId}" class="w-full font-mono text-xs p-4 bg-slate-950 text-emerald-300 border-none outline-none resize-y min-h-[100px] focus:ring-1 focus:ring-blue-500/50" spellcheck="false">${escapeHtml(cleanCode)}</textarea>
+
+                            <!-- Output Box -->
+                            <div id="output-${cellId}" class="hidden border-t border-slate-800 p-4 crt-terminal">
+                                <div class="flex items-center justify-between text-[11px] text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono">
+                                    <span><i class="fa-solid fa-terminal text-cyan-400 mr-1"></i> Output</span>
+                                    <span id="time-${cellId}">0ms</span>
+                                </div>
+                                <pre id="text-${cellId}" class="text-xs font-mono whitespace-pre-wrap text-emerald-400">Executing...</pre>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                cellsContainer.appendChild(cellElement);
+            });
+
+            // Render KaTeX math
+            if (window.renderMathInElement) {
+                renderMathInElement(cellsContainer, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // ===== HELPERS =====
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function cleanMagicCommands(code) {
+            return code.split('\n').map(line => {
+                const t = line.trim();
+                if (t.startsWith('%%writefile') || t.startsWith('!g++') || t.startsWith('!python') || t.startsWith('%%')) {
+                    return `// ${line}`;
+                }
+                return line;
+            }).join('\n');
+        }
+
+        function detectCodeLanguage(code) {
+            if (code.includes('#include') || code.includes('std::') || code.includes('cout') || code.includes('int main')) {
+                return 'cpp';
+            }
+            return 'python';
+        }
+
+        // ===== LIVE CODE EXECUTION VIA PISTON API =====
+        async function executeCodeCell(cellId, lang) {
+            const codeEditor = document.getElementById(cellId);
+            const outputBox = document.getElementById(`output-${cellId}`);
+            const outputText = document.getElementById(`text-${cellId}`);
+            const outputTime = document.getElementById(`time-${cellId}`);
+            const runBtn = document.getElementById(`run-btn-${cellId}`);
+
+            if (!codeEditor) return;
+
+            const codeToRun = codeEditor.value;
+
+            outputBox.classList.remove('hidden');
+            outputText.textContent = 'Compiling & executing on cloud server...';
+            outputText.className = 'text-xs font-mono text-amber-400 animate-subtle';
+            runBtn.disabled = true;
+            runBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Running...`;
+
+            const startTime = performance.now();
+
+            try {
+                const payload = {
+                    language: lang === 'cpp' ? 'cpp' : 'python',
+                    version: lang === 'cpp' ? '10.2.0' : '3.10.0',
+                    files: [{
+                        name: lang === 'cpp' ? 'main.cpp' : 'main.py',
+                        content: codeToRun
+                    }]
+                };
+
+                const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                const duration = Math.round(performance.now() - startTime);
+                outputTime.textContent = `${duration}ms`;
+
+                if (data.run) {
+                    const stdout = data.run.stdout || '';
+                    const stderr = data.run.stderr || '';
+                    const output = stdout + (stderr ? `\n[stderr]:\n${stderr}` : '');
+                    outputText.textContent = output.trim() || 'Executed successfully (no output).';
+                    outputText.className = stderr ? 'text-xs font-mono text-red-400' : 'text-xs font-mono text-cyan-300';
+                } else if (data.compile && data.compile.stderr) {
+                    outputText.textContent = `[Compilation Error]:\n${data.compile.stderr}`;
+                    outputText.className = 'text-xs font-mono text-red-400';
+                } else {
+                    outputText.textContent = 'Execution completed.';
+                    outputText.className = 'text-xs font-mono text-cyan-300';
+                }
+
+            } catch (err) {
+                outputText.textContent = `Failed to connect to execution engine:\n${err.message}\n\nTip: Click "Open in Colab" to run on Google Colab instead!`;
+                outputText.className = 'text-xs font-mono text-red-400';
+            } finally {
+                runBtn.disabled = false;
+                runBtn.innerHTML = `<i class="fa-solid fa-play text-[10px]"></i> Run`;
+            }
+        }
+
+        function copyCodeCell(cellId) {
+            const editor = document.getElementById(cellId);
+            if (editor) {
+                navigator.clipboard.writeText(editor.value).then(() => {
+                    const btn = editor.closest('.neu-flat').querySelector('[onclick*="copyCodeCell"]');
+                    if (btn) {
+                        const orig = btn.innerHTML;
+                        btn.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Copied!`;
+                        setTimeout(() => { btn.innerHTML = orig; }, 1500);
+                    }
+                });
+            }
+        }
+
+        // ===== FALLBACK FOR UNAVAILABLE NOTEBOOKS =====
+        function renderFallbackNotebookContent(meta, path) {
+            const cellsContainer = document.getElementById('cells-container');
+            cellsContainer.innerHTML = '';
+
+            const simulatedData = {
+                cells: [
+                    {
+                        cell_type: 'markdown',
+                        source: `# ${meta ? meta.title : 'DSA Notebook'}\n\n> **Note:** This notebook is not yet available via raw fetch (it may still be uploading or be empty).\n\nYou can:\n- **Open in Google Colab** using the button above\n- **View on GitHub** to see the source\n- Check back later as content is added progressively`
+                    },
+                    {
+                        cell_type: 'code',
+                        source: `#include <iostream>\nusing namespace std;\n\n// Sample C++ code for ${meta ? meta.title : path}\nint main() {\n    cout << "DSA Bible — ${path}" << endl;\n    cout << "Open in Colab for full execution!" << endl;\n    return 0;\n}`
+                    }
+                ]
+            };
+
+            renderNotebookCells(simulatedData);
+        }
+
+        // ===== SEARCH =====
+        function setupSearchListeners() {
+            const globalSearch = document.getElementById('global-search');
+            const mobileSearch = document.getElementById('mobile-search');
+
+            const handleSearch = (e) => {
+                const query = e.target.value.trim();
+                renderSidebarPhases(query);
+                if (globalSearch !== e.target) globalSearch.value = query;
+                if (mobileSearch !== e.target) mobileSearch.value = query;
+            };
+
+            globalSearch.addEventListener('input', handleSearch);
+            mobileSearch.addEventListener('input', handleSearch);
+        }
+
+        // ===== FAVORITES =====
+        function toggleFavorite(path) {
+            if (favorites.includes(path)) {
+                favorites = favorites.filter(p => p !== path);
+            } else {
+                favorites.push(path);
+            }
+            localStorage.setItem('dsa_favorites', JSON.stringify(favorites));
+            updateFavoritesBadge();
+            renderSidebarPhases();
+            updateHeaderButtonsState();
+            renderFavoritesList();
+        }
+
+        function toggleCurrentNotebookFavorite() {
+            if (currentNotebookPath) toggleFavorite(currentNotebookPath);
+        }
+
+        function updateFavoritesBadge() {
+            const favBadge = document.getElementById('fav-badge');
+            if (favorites.length > 0) {
+                favBadge.textContent = favorites.length;
+                favBadge.classList.remove('hidden');
+            } else {
+                favBadge.classList.add('hidden');
+            }
+        }
+
+        function toggleFavoritesDrawer() {
+            const drawer = document.getElementById('favorites-drawer');
+            drawer.classList.toggle('translate-x-full');
+            renderFavoritesList();
+        }
+
+        function renderFavoritesList() {
+            const favList = document.getElementById('favorites-list');
+
+            if (favorites.length === 0) {
+                favList.innerHTML = `<p class="text-xs text-[var(--text-muted)] text-center py-8">No bookmarked notebooks yet.<br>Click the heart icon to bookmark!</p>`;
+                return;
+            }
+
+            favList.innerHTML = '';
+            favorites.forEach(path => {
+                let nbTitle = path.split('/').pop().replace('.ipynb','').replace(/_/g,' ');
+                CURRICULUM_DATA.forEach(p => {
+                    const f = p.notebooks.find(n => n.path === path);
+                    if (f) nbTitle = f.title;
+                });
+
+                const item = document.createElement('div');
+                item.className = 'neu-flat p-3 flex items-center justify-between gap-2 cursor-pointer';
+                item.innerHTML = `
+                    <div class="flex items-center gap-2 min-w-0" onclick="loadNotebook('${path}'); toggleFavoritesDrawer();">
+                        <i class="fa-solid fa-book-bookmark text-blue-400 text-xs"></i>
+                        <span class="text-xs font-semibold text-[var(--text-main)] truncate">${nbTitle}</span>
+                    </div>
+                    <button onclick="toggleFavorite('${path}')" class="text-red-400 hover:text-red-500 p-1 shrink-0">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+                `;
+                favList.appendChild(item);
+            });
+        }
+
+        // ===== PROGRESS TRACKER =====
+        function toggleNotebookCompletion() {
+            if (!currentNotebookPath) return;
+
+            if (completedNotebooks.includes(currentNotebookPath)) {
+                completedNotebooks = completedNotebooks.filter(p => p !== currentNotebookPath);
+            } else {
+                completedNotebooks.push(currentNotebookPath);
+            }
+
+            localStorage.setItem('dsa_completed', JSON.stringify(completedNotebooks));
+            updateProgressStats();
+            updateHeaderButtonsState();
+            renderSidebarPhases();
+        }
+
+        function updateProgressStats() {
+            let totalNotebooks = 0;
+            CURRICULUM_DATA.forEach(p => totalNotebooks += p.notebooks.length);
+
+            const percentage = totalNotebooks > 0 ? Math.round((completedNotebooks.length / totalNotebooks) * 100) : 0;
+
+            document.getElementById('completion-stat').textContent = `${percentage}% Done`;
+            document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+        }
+
+        function updateHeaderButtonsState() {
+            if (!currentNotebookPath) return;
+
+            const isFav = favorites.includes(currentNotebookPath);
+            const isDone = completedNotebooks.includes(currentNotebookPath);
+
+            const heartBtn = document.getElementById('favorite-toggle-btn');
+            isFav ? heartBtn.classList.add('is-favorite') : heartBtn.classList.remove('is-favorite');
+
+            const completeBtn = document.getElementById('mark-complete-btn');
+            if (isDone) {
+                completeBtn.className = 'neu-button px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-emerald-400 active';
+                completeBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Completed ✓</span>`;
+            } else {
+                completeBtn.className = 'neu-button px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-[var(--text-muted)]';
+                completeBtn.innerHTML = `<i class="fa-regular fa-circle-check"></i><span>Mark Done</span>`;
+            }
+        }
+
+        // ===== MOBILE SIDEBAR TOGGLE =====
+        function setupSidebarMobileToggle() {
+            const toggleBtn = document.getElementById('toggle-sidebar-btn');
+            const sidebar = document.getElementById('sidebar');
+            toggleBtn.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
+        }
+
+        function loadRepoOverview() {
+            document.getElementById('welcome-view').classList.remove('hidden');
+            document.getElementById('cells-container').classList.add('hidden');
+            document.getElementById('notebook-header-container').classList.add('hidden');
+            currentNotebookPath = null;
+            window.location.hash = '';
+            renderSidebarPhases();
+        }
+
+        // ===== PLAYGROUND SANDBOX =====
+        function openPlaygroundModal() {
+            document.getElementById('playground-modal').classList.remove('hidden');
+        }
+
+        function closePlaygroundModal() {
+            document.getElementById('playground-modal').classList.add('hidden');
+        }
+
+        async function runSandboxCode() {
+            const lang = document.getElementById('sandbox-lang').value;
+            const code = document.getElementById('sandbox-editor').value;
+            const output = document.getElementById('sandbox-output');
+            const runBtn = document.getElementById('run-sandbox-btn');
+
+            output.textContent = 'Compiling and running...';
+            runBtn.disabled = true;
+
+            try {
+                const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        language: lang,
+                        version: lang === 'cpp' ? '10.2.0' : '3.10.0',
+                        files: [{ name: lang === 'cpp' ? 'main.cpp' : 'main.py', content: code }]
+                    })
+                });
+
+                const data = await res.json();
+                if (data.run) {
+                    output.textContent = (data.run.stdout || '') + (data.run.stderr ? `\nStderr:\n${data.run.stderr}` : '') || 'No output.';
+                } else if (data.compile) {
+                    output.textContent = data.compile.stderr || 'Compilation error.';
+                }
+            } catch (e) {
+                output.textContent = `Execution failed: ${e.message}`;
+            } finally {
+                runBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
