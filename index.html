@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSA Bible — Master Data Structures & Algorithms</title>
     <meta name="description" content="Interactive DSA learning platform with Jupyter notebook viewer, live C++ & Python code execution, progress tracking, and Google Colab integration.">
+    <!-- Favicon: inline SVG → data URI -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141824'/%3E%3Crect x='3' y='3' width='58' height='58' rx='12' fill='%231b2030'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='36' font-weight='900' fill='%2360a5fa'%3E%7B%7D%3C/text%3E%3Ccircle cx='52' cy='14' r='6' fill='%2334d399'/%3E%3C/svg%3E">
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome Icons -->
@@ -197,6 +199,37 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .fade-in { animation: fadeIn 0.3s ease forwards; }
+
+        /* ===== SIDEBAR COLLAPSE (desktop) ===== */
+        /* Sidebar slides in/out on mobile via transform, collapses width on desktop */
+        #sidebar {
+            transition: width 0.3s cubic-bezier(0.4,0,0.2,1),
+                        transform 0.3s cubic-bezier(0.4,0,0.2,1),
+                        opacity 0.3s ease,
+                        padding 0.3s ease;
+            overflow: hidden;
+        }
+
+        #sidebar.desktop-collapsed {
+            width: 0 !important;
+            padding: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Sidebar toggle button — visible on ALL screen sizes */
+        #toggle-sidebar-btn {
+            display: flex !important;   /* override lg:hidden */
+        }
+
+        /* Rotate icon when sidebar is collapsed */
+        #toggle-sidebar-btn .sidebar-icon {
+            transition: transform 0.3s ease;
+        }
+        #sidebar.desktop-collapsed ~ * #toggle-sidebar-btn .sidebar-icon,
+        body.sidebar-closed #toggle-sidebar-btn .sidebar-icon {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
@@ -207,8 +240,9 @@
             
             <!-- Brand / Logo -->
             <div class="flex items-center gap-3">
-                <button id="toggle-sidebar-btn" class="lg:hidden neu-button p-2.5 text-[var(--text-main)] hover:text-blue-500">
-                    <i class="fa-solid fa-bars text-lg"></i>
+                <!-- Sidebar toggle — works on ALL screen sizes -->
+                <button id="toggle-sidebar-btn" class="neu-button p-2.5 text-[var(--text-main)] hover:text-blue-500" title="Toggle Sidebar">
+                    <i class="fa-solid fa-table-columns sidebar-icon text-lg"></i>
                 </button>
                 <div class="flex items-center gap-2.5 cursor-pointer" onclick="loadRepoOverview()">
                     <div class="w-10 h-10 neu-pill flex items-center justify-center text-blue-500 text-xl font-black">
@@ -274,7 +308,7 @@
     <div class="flex-1 max-w-7xl w-full mx-auto flex gap-6 p-4 lg:p-6 overflow-hidden">
         
         <!-- SIDEBAR: PHASE DIRECTORY NAVIGATOR -->
-        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-80 lg:w-72 bg-[var(--surface-color)] lg:bg-transparent transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shrink-0 p-4 lg:p-0 overflow-y-auto">
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-80 lg:w-72 bg-[var(--surface-color)] lg:bg-transparent transform -translate-x-full lg:translate-x-0 flex flex-col shrink-0 p-4 lg:p-0 overflow-y-auto">
             
             <div class="neu-flat p-4 mb-4 flex flex-col gap-3">
                 <div class="flex items-center justify-between">
@@ -1184,11 +1218,66 @@
             }
         }
 
-        // ===== MOBILE SIDEBAR TOGGLE =====
+        // ===== SIDEBAR TOGGLE (mobile + desktop) =====
+        let sidebarOpen = true; // sidebar starts visible on desktop
+
         function setupSidebarMobileToggle() {
             const toggleBtn = document.getElementById('toggle-sidebar-btn');
-            const sidebar = document.getElementById('sidebar');
-            toggleBtn.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
+            const sidebar   = document.getElementById('sidebar');
+            const icon      = toggleBtn.querySelector('.sidebar-icon');
+
+            // Restore saved state
+            const savedState = localStorage.getItem('dsa_sidebar');
+            if (savedState === 'closed') {
+                closeSidebar(sidebar, icon);
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                const isDesktop = window.innerWidth >= 1024; // lg breakpoint
+                if (isDesktop) {
+                    // Desktop: toggle width collapse
+                    if (sidebarOpen) {
+                        closeSidebar(sidebar, icon);
+                    } else {
+                        openSidebar(sidebar, icon);
+                    }
+                } else {
+                    // Mobile: toggle translate (slide in from left)
+                    const hidden = sidebar.classList.contains('-translate-x-full');
+                    if (hidden) {
+                        sidebar.classList.remove('-translate-x-full');
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        sidebar.classList.add('-translate-x-full');
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                }
+            });
+
+            // Close mobile sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 1024 && 
+                    !sidebar.contains(e.target) && 
+                    !toggleBtn.contains(e.target) &&
+                    !sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.add('-translate-x-full');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        }
+
+        function closeSidebar(sidebar, icon) {
+            sidebarOpen = false;
+            sidebar.classList.add('desktop-collapsed');
+            if (icon) icon.style.transform = 'rotate(180deg)';
+            localStorage.setItem('dsa_sidebar', 'closed');
+        }
+
+        function openSidebar(sidebar, icon) {
+            sidebarOpen = true;
+            sidebar.classList.remove('desktop-collapsed');
+            if (icon) icon.style.transform = 'rotate(0deg)';
+            localStorage.setItem('dsa_sidebar', 'open');
         }
 
         function loadRepoOverview() {
