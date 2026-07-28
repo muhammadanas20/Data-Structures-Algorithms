@@ -1333,57 +1333,80 @@
             const output   = document.getElementById('sandbox-output');
             const runBtn   = document.getElementById('run-sandbox-btn');
 
-            // Map select value to Piston language identifiers
-            const pistonLang    = langVal === 'cpp' ? 'c++' : 'python3';
-            const pistonVersion = langVal === 'cpp' ? '10.2.0' : '3.10.0';
-            const fileName      = langVal === 'cpp' ? 'main.cpp' : 'main.py';
-
             output.textContent = '⏳ Compiling and running...';
             output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-amber-400';
             runBtn.disabled = true;
             runBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Running...';
 
             try {
+                // Primary API: Judge0 CE
+                const judge0LangId = langVal === 'cpp' ? 105 : 92; // 105: GCC 13.2.0, 92: Python 3.11.2
                 const ctrl  = new AbortController();
-                const timer = setTimeout(() => ctrl.abort(), 15000);
+                const timer = setTimeout(() => ctrl.abort(), 12000);
 
-                const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+                let res = await fetch('https://ce.judge0.com/submissions?wait=true', {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        language: pistonLang,
-                        version:  pistonVersion,
-                        files:    [{ name: fileName, content: code }]
+                        language_id: judge0LangId,
+                        source_code: code
                     }),
                     signal: ctrl.signal
-                });
+                }).catch(() => null);
+
                 clearTimeout(timer);
+
+                if (res && res.ok) {
+                    const data = await res.json();
+                    if (data.compile_output) {
+                        output.textContent = `[Compile Error]:\n${data.compile_output}`;
+                        output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
+                    } else if (data.stderr && !data.stdout) {
+                        output.textContent = `[Runtime Error]:\n${data.stderr}`;
+                        output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
+                    } else {
+                        const out = (data.stdout || '') + (data.stderr ? `\nStderr:\n${data.stderr}` : '');
+                        output.textContent = out.trim() || '(No output)';
+                        output.className = data.stderr
+                            ? 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400'
+                            : 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-cyan-300';
+                    }
+                    return;
+                }
+
+                // Secondary Fallback API: Wandbox
+                const wandboxCompiler = langVal === 'cpp' ? 'gcc-head' : 'cpython-head';
+                const ctrl2  = new AbortController();
+                const timer2 = setTimeout(() => ctrl2.abort(), 12000);
+
+                res = await fetch('https://wandbox.org/api/compile.json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        compiler: wandboxCompiler,
+                        code: code
+                    }),
+                    signal: ctrl2.signal
+                });
+                clearTimeout(timer2);
 
                 if (!res.ok) throw new Error(`Server error ${res.status}`);
 
                 const data = await res.json();
-
-                if (data.message) {
-                    // API-level error (unknown language, rate limit, etc.)
-                    output.textContent = `[API Error]: ${data.message}`;
+                if (data.compiler_error) {
+                    output.textContent = `[Compile Error]:\n${data.compiler_error}`;
                     output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
-                } else if (data.compile && data.compile.code !== 0) {
-                    output.textContent = `[Compile Error]:\n${data.compile.stderr || data.compile.output}`;
-                    output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
-                } else if (data.run) {
-                    const out = (data.run.stdout || '') + (data.run.stderr ? `\nStderr:\n${data.run.stderr}` : '');
+                } else {
+                    const out = (data.program_output || '') + (data.program_error ? `\nStderr:\n${data.program_error}` : '');
                     output.textContent = out.trim() || '(No output)';
-                    output.className = data.run.stderr
+                    output.className = data.program_error
                         ? 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400'
                         : 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-cyan-300';
-                } else {
-                    output.textContent = JSON.stringify(data, null, 2);
-                    output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-yellow-400';
                 }
             } catch (e) {
                 const msg = e.name === 'AbortError'
-                    ? 'Timed out (15s). Check your connection or use Colab.'
-                    : `Error: ${e.message}`;
+                    ? 'Timed out (12s). Check your connection or use Colab.'
+                    : `Error: Execution server failed (${e.message})`;
                 output.textContent = msg;
                 output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
             } finally {
