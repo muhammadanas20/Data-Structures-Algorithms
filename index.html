@@ -1021,41 +1021,60 @@
             const startTime = performance.now();
 
             try {
+                // Piston API: language must be 'c++' not 'cpp'
+                const pistonLang    = lang === 'cpp' ? 'c++' : 'python3';
+                const pistonVersion = lang === 'cpp' ? '10.2.0' : '3.10.0';
+                const fileName      = lang === 'cpp' ? 'main.cpp' : 'main.py';
+
                 const payload = {
-                    language: lang === 'cpp' ? 'cpp' : 'python',
-                    version: lang === 'cpp' ? '10.2.0' : '3.10.0',
-                    files: [{
-                        name: lang === 'cpp' ? 'main.cpp' : 'main.py',
-                        content: codeToRun
-                    }]
+                    language: pistonLang,
+                    version:  pistonVersion,
+                    files: [{ name: fileName, content: codeToRun }]
                 };
+
+                // 15-second timeout
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 15000);
 
                 const res = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    signal: ctrl.signal
                 });
+                clearTimeout(timer);
+
+                if (!res.ok) {
+                    throw new Error(`Server error ${res.status}: ${res.statusText}`);
+                }
 
                 const data = await res.json();
                 const duration = Math.round(performance.now() - startTime);
                 outputTime.textContent = `${duration}ms`;
 
-                if (data.run) {
+                // API-level error (e.g. unknown language)
+                if (data.message) {
+                    outputText.textContent = `[API Error]: ${data.message}`;
+                    outputText.className = 'text-xs font-mono text-red-400';
+                } else if (data.compile && data.compile.code !== 0) {
+                    outputText.textContent = `[Compile Error]:\n${data.compile.stderr || data.compile.output}`;
+                    outputText.className = 'text-xs font-mono text-red-400';
+                } else if (data.run) {
                     const stdout = data.run.stdout || '';
                     const stderr = data.run.stderr || '';
                     const output = stdout + (stderr ? `\n[stderr]:\n${stderr}` : '');
                     outputText.textContent = output.trim() || 'Executed successfully (no output).';
                     outputText.className = stderr ? 'text-xs font-mono text-red-400' : 'text-xs font-mono text-cyan-300';
-                } else if (data.compile && data.compile.stderr) {
-                    outputText.textContent = `[Compilation Error]:\n${data.compile.stderr}`;
-                    outputText.className = 'text-xs font-mono text-red-400';
                 } else {
-                    outputText.textContent = 'Execution completed.';
-                    outputText.className = 'text-xs font-mono text-cyan-300';
+                    outputText.textContent = JSON.stringify(data, null, 2);
+                    outputText.className = 'text-xs font-mono text-yellow-400';
                 }
 
             } catch (err) {
-                outputText.textContent = `Failed to connect to execution engine:\n${err.message}\n\nTip: Click "Open in Colab" to run on Google Colab instead!`;
+                const msg = err.name === 'AbortError'
+                    ? 'Request timed out (15s). Check your internet connection or try Open in Colab.'
+                    : `Failed to reach execution engine:\n${err.message}\n\nTip: Click "Colab" to run on Google Colab instead!`;
+                outputText.textContent = msg;
                 outputText.className = 'text-xs font-mono text-red-400';
             } finally {
                 runBtn.disabled = false;
@@ -1309,35 +1328,67 @@
         }
 
         async function runSandboxCode() {
-            const lang = document.getElementById('sandbox-lang').value;
-            const code = document.getElementById('sandbox-editor').value;
-            const output = document.getElementById('sandbox-output');
-            const runBtn = document.getElementById('run-sandbox-btn');
+            const langVal  = document.getElementById('sandbox-lang').value;  // 'cpp' or 'python'
+            const code     = document.getElementById('sandbox-editor').value;
+            const output   = document.getElementById('sandbox-output');
+            const runBtn   = document.getElementById('run-sandbox-btn');
 
-            output.textContent = 'Compiling and running...';
+            // Map select value to Piston language identifiers
+            const pistonLang    = langVal === 'cpp' ? 'c++' : 'python3';
+            const pistonVersion = langVal === 'cpp' ? '10.2.0' : '3.10.0';
+            const fileName      = langVal === 'cpp' ? 'main.cpp' : 'main.py';
+
+            output.textContent = '⏳ Compiling and running...';
+            output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-amber-400';
             runBtn.disabled = true;
+            runBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Running...';
 
             try {
+                const ctrl  = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 15000);
+
                 const res = await fetch('https://emkc.org/api/v2/piston/execute', {
-                    method: 'POST',
+                    method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        language: lang,
-                        version: lang === 'cpp' ? '10.2.0' : '3.10.0',
-                        files: [{ name: lang === 'cpp' ? 'main.cpp' : 'main.py', content: code }]
-                    })
+                        language: pistonLang,
+                        version:  pistonVersion,
+                        files:    [{ name: fileName, content: code }]
+                    }),
+                    signal: ctrl.signal
                 });
+                clearTimeout(timer);
+
+                if (!res.ok) throw new Error(`Server error ${res.status}`);
 
                 const data = await res.json();
-                if (data.run) {
-                    output.textContent = (data.run.stdout || '') + (data.run.stderr ? `\nStderr:\n${data.run.stderr}` : '') || 'No output.';
-                } else if (data.compile) {
-                    output.textContent = data.compile.stderr || 'Compilation error.';
+
+                if (data.message) {
+                    // API-level error (unknown language, rate limit, etc.)
+                    output.textContent = `[API Error]: ${data.message}`;
+                    output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
+                } else if (data.compile && data.compile.code !== 0) {
+                    output.textContent = `[Compile Error]:\n${data.compile.stderr || data.compile.output}`;
+                    output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
+                } else if (data.run) {
+                    const out = (data.run.stdout || '') + (data.run.stderr ? `\nStderr:\n${data.run.stderr}` : '');
+                    output.textContent = out.trim() || '(No output)';
+                    output.className = data.run.stderr
+                        ? 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400'
+                        : 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-cyan-300';
+                } else {
+                    output.textContent = JSON.stringify(data, null, 2);
+                    output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-yellow-400';
                 }
             } catch (e) {
-                output.textContent = `Execution failed: ${e.message}`;
+                const msg = e.name === 'AbortError'
+                    ? 'Timed out (15s). Check your connection or use Colab.'
+                    : `Error: ${e.message}`;
+                output.textContent = msg;
+                output.className = 'crt-terminal p-3 text-xs min-h-[80px] sm:min-h-[100px] max-h-32 sm:max-h-40 overflow-y-auto font-mono text-red-400';
             } finally {
                 runBtn.disabled = false;
+                runBtn.innerHTML = '<i class="fa-solid fa-play"></i> Execute Code';
             }
         }
     </script>
