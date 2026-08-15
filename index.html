@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DSA Bible — Master Data Structures & Algorithms</title>
     <meta name="description" content="Interactive DSA learning platform with Jupyter notebook viewer, live C++ & Python code execution, progress tracking, and Google Colab integration.">
+    <!-- PWA / Mobile Chrome App Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#141824">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DSA Bible">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <!-- Favicon: inline SVG → data URI -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141824'/%3E%3Crect x='3' y='3' width='58' height='58' rx='12' fill='%231b2030'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='36' font-weight='900' fill='%2360a5fa'%3E%7B%7D%3C/text%3E%3Ccircle cx='52' cy='14' r='6' fill='%2334d399'/%3E%3C/svg%3E">
     <!-- Tailwind CSS v4 CDN -->
@@ -657,6 +664,15 @@
             if (hash) {
                 loadNotebook(hash);
             }
+
+            // Register Service Worker for Mobile PWA Chrome App support
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(reg => console.log('ServiceWorker registered:', reg.scope))
+                        .catch(err => console.log('ServiceWorker registration failed:', err));
+                });
+            }
         });
 
         // ===== SANDBOX DEFAULT CODE (set via JS to avoid HTML parsing stripping <iostream>) =====
@@ -817,6 +833,11 @@
         async function loadNotebook(path) {
             currentNotebookPath = path;
             window.location.hash = encodeURIComponent(path);
+
+            // Auto-close sidebar on mobile viewports when opening a notebook
+            if (window.innerWidth < 1024) {
+                closeSidebarMobile();
+            }
 
             const welcomeView = document.getElementById('welcome-view');
             const headerContainer = document.getElementById('notebook-header-container');
