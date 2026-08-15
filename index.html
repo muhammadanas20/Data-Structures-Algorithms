@@ -12,8 +12,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DSA Bible">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <!-- Favicon: inline SVG → data URI -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141824'/%3E%3Crect x='3' y='3' width='58' height='58' rx='12' fill='%231b2030'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='36' font-weight='900' fill='%2360a5fa'%3E%7B%7D%3C/text%3E%3Ccircle cx='52' cy='14' r='6' fill='%2334d399'/%3E%3C/svg%3E">
+    <!-- Favicon: inline SVG + PNG fallbacks -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141824'/%3E%3Crect x='2' y='2' width='60' height='60' rx='12' fill='%231b2030'/%3E%3Ctext x='50%25' y='46%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace' font-size='30' font-weight='900' fill='%2360a5fa'%3E%7B%7D%3C/text%3E%3Ccircle cx='50' cy='12' r='5' fill='%2334d399'/%3E%3Cline x1='20' y1='50' x2='32' y2='42' stroke='%2360a5fa' stroke-width='1.5' stroke-linecap='round' opacity='0.5'/%3E%3Cline x1='32' y1='42' x2='44' y2='50' stroke='%2360a5fa' stroke-width='1.5' stroke-linecap='round' opacity='0.5'/%3E%3Ccircle cx='20' cy='50' r='2' fill='%2360a5fa' opacity='0.7'/%3E%3Ccircle cx='32' cy='42' r='2' fill='%2360a5fa' opacity='0.7'/%3E%3Ccircle cx='44' cy='50' r='2' fill='%2360a5fa' opacity='0.7'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
     <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome Icons -->
@@ -164,26 +166,42 @@
         ::-webkit-scrollbar-thumb { background: var(--neu-shadow-dark); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-        /* ===== MARKDOWN BODY ===== */
-        .markdown-body h1 { font-size: 1.85rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
-        .markdown-body h2 { font-size: 1.45rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
-        .markdown-body h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
-        .markdown-body h4 { font-size: 1.05rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.4rem; }
-        .markdown-body p { margin-bottom: 0.85rem; line-height: 1.7; }
-        .markdown-body ul, .markdown-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+        /* ===== MARKDOWN BODY (mobile-first) ===== */
+        .markdown-body h1 { font-size: 1.5rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+        .markdown-body h2 { font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.6rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
+        .markdown-body h3 { font-size: 1.1rem; font-weight: 600; margin-top: 0.85rem; margin-bottom: 0.4rem; }
+        .markdown-body h4 { font-size: 1rem; font-weight: 600; margin-top: 0.75rem; margin-bottom: 0.4rem; }
+        .markdown-body p { margin-bottom: 0.75rem; line-height: 1.7; font-size: 0.875rem; }
+        .markdown-body ul, .markdown-body ol { padding-left: 1.25rem; margin-bottom: 0.75rem; }
         .markdown-body ul { list-style-type: disc; }
         .markdown-body ol { list-style-type: decimal; }
-        .markdown-body li { margin-bottom: 0.35rem; line-height: 1.6; }
-        .markdown-body blockquote { border-left: 4px solid var(--accent-primary); padding-left: 1rem; color: var(--text-muted); font-style: italic; margin-bottom: 1rem; }
-        .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; overflow-x: auto; display: block; }
-        .markdown-body th, .markdown-body td { border: 1px solid var(--border-color); padding: 0.5rem 0.8rem; text-align: left; }
+        .markdown-body li { margin-bottom: 0.3rem; line-height: 1.6; font-size: 0.875rem; }
+        .markdown-body blockquote { border-left: 4px solid var(--accent-primary); padding-left: 0.75rem; color: var(--text-muted); font-style: italic; margin-bottom: 0.75rem; font-size: 0.875rem; }
+        .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 0.75rem; overflow-x: auto; display: block; font-size: 0.8rem; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border-color); padding: 0.35rem 0.5rem; text-align: left; }
         .markdown-body th { background: rgba(0,0,0,0.05); font-weight: 600; }
-        .markdown-body code:not(pre code) { background: rgba(100, 116, 139, 0.15); padding: 0.15rem 0.4rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.875em; color: var(--accent-primary); }
-        .markdown-body pre { margin-bottom: 1rem; border-radius: 12px; overflow-x: auto; background-color: var(--code-bg); border: 1px solid var(--border-color); padding: 1rem; }
-        .markdown-body pre code { background: transparent !important; padding: 0 !important; }
+        .markdown-body code:not(pre code) { background: rgba(100, 116, 139, 0.15); padding: 0.12rem 0.35rem; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.8em; color: var(--accent-primary); }
+        .markdown-body pre { margin-bottom: 0.75rem; border-radius: 12px; overflow-x: auto; background-color: var(--code-bg); border: 1px solid var(--border-color); padding: 0.75rem; }
+        .markdown-body pre code { background: transparent !important; padding: 0 !important; font-size: 0.8rem; }
         .markdown-body strong { font-weight: 700; }
         .markdown-body em { font-style: italic; }
-        .markdown-body hr { border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border-color); margin: 1.25rem 0; }
+        .markdown-body img { max-width: 100%; height: auto; border-radius: 8px; margin: 0.75rem 0; }
+
+        @media (min-width: 640px) {
+            .markdown-body h1 { font-size: 1.85rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+            .markdown-body h2 { font-size: 1.45rem; margin-top: 1.25rem; margin-bottom: 0.75rem; }
+            .markdown-body h3 { font-size: 1.2rem; margin-top: 1rem; margin-bottom: 0.5rem; }
+            .markdown-body h4 { font-size: 1.05rem; }
+            .markdown-body p { margin-bottom: 0.85rem; font-size: 0.9375rem; }
+            .markdown-body ul, .markdown-body ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+            .markdown-body li { margin-bottom: 0.35rem; font-size: 0.9375rem; }
+            .markdown-body blockquote { padding-left: 1rem; margin-bottom: 1rem; font-size: 0.9375rem; }
+            .markdown-body table { margin-bottom: 1rem; font-size: 0.875rem; }
+            .markdown-body th, .markdown-body td { padding: 0.5rem 0.8rem; }
+            .markdown-body pre { margin-bottom: 1rem; padding: 1rem; }
+            .markdown-body pre code { font-size: 0.875em; }
+        }
 
         /* ===== CODE HIGHLIGHT OVERRIDES & TERMINAL ===== */
         pre code.hljs {
@@ -221,7 +239,24 @@
                         transform 0.3s cubic-bezier(0.4,0,0.2,1),
                         opacity 0.3s ease,
                         padding 0.3s ease;
-            overflow: hidden;
+            overscroll-behavior: contain;
+        }
+
+        /* Desktop: sidebar fills container height and scrolls independently */
+        @media (min-width: 1024px) {
+            #sidebar {
+                overflow-y: auto;
+                overflow-x: hidden;
+                max-height: 100%;
+                scrollbar-gutter: stable;
+            }
+        }
+
+        /* Mobile: sidebar is an overlay drawer with its own scroll */
+        @media (max-width: 1023px) {
+            #sidebar {
+                overflow-y: auto;
+            }
         }
 
         #sidebar.desktop-collapsed {
@@ -229,6 +264,42 @@
             padding: 0 !important;
             opacity: 0;
             pointer-events: none;
+            overflow: hidden !important;
+        }
+
+        /* Main content area scrolls independently */
+        main {
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
+        }
+
+        /* Sticky sidebar header: progress bar stays visible at top while phases scroll */
+        #sidebar > .neu-flat:first-child {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--surface-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0;
+        }
+
+        /* Mobile safe area insets for PWA mode */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            #sidebar {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            body {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+
+        /* Smooth focus ring for accessibility */
+        *:focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+            border-radius: 4px;
         }
 
         /* Sidebar toggle button — visible on ALL screen sizes */
@@ -246,10 +317,10 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+<body class="h-screen overflow-hidden flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
     <!-- ========== TOP NAVBAR ========== -->
-    <header class="sticky top-0 z-40 w-full backdrop-blur-md bg-[var(--surface-color)]/90 border-b border-[var(--border-color)] px-3 sm:px-4 lg:px-8 py-2.5 transition-colors duration-300">
+    <header class="shrink-0 z-40 w-full backdrop-blur-md bg-[var(--surface-color)]/90 border-b border-[var(--border-color)] px-3 sm:px-4 lg:px-8 py-2.5 transition-colors duration-300">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
             
             <!-- Brand / Logo -->
@@ -265,7 +336,7 @@
                     <div class="min-w-0">
                         <h1 class="font-extrabold text-sm sm:text-base lg:text-lg tracking-tight leading-none flex items-center gap-1.5 sm:gap-2">
                             <span>DSA Bible</span>
-                            <span class="hidden xs:inline text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 font-semibold border border-blue-500/20">Notes</span>
+                            <span class="hidden min-[480px]:inline text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 font-semibold border border-blue-500/20">Notes</span>
                         </h1>
                         <p class="hidden sm:block text-xs text-[var(--text-muted)] font-medium">Data Structures &amp; Algorithms Hub</p>
                     </div>
@@ -319,7 +390,7 @@
     </header>
 
     <!-- ========== MAIN APP CONTAINER ========== -->
-    <div class="flex-1 max-w-7xl w-full mx-auto flex gap-4 lg:gap-6 p-2 sm:p-4 lg:p-6 overflow-hidden">
+    <div class="flex-1 min-h-0 max-w-7xl w-full mx-auto flex gap-4 lg:gap-6 p-2 sm:p-4 lg:p-6 overflow-hidden">
         
         <!-- SIDEBAR OVERLAY (mobile only) -->
         <div id="sidebar-overlay" class="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm lg:hidden opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeSidebarMobile()"></div>
@@ -348,10 +419,10 @@
         </aside>
 
         <!-- MAIN VIEW CONTENT AREA -->
-        <main class="flex-1 min-w-0 flex flex-col gap-6">
+        <main class="flex-1 min-w-0 min-h-0 flex flex-col gap-6">
             
             <!-- NOTEBOOK ACTIONS HEADER -->
-            <div id="notebook-header-container" class="neu-flat p-3 sm:p-4 lg:p-5 flex flex-col gap-3 relative overflow-hidden hidden">
+            <div id="notebook-header-container" class="neu-flat p-2.5 sm:p-4 lg:p-5 flex flex-col gap-2 sm:gap-3 relative overflow-hidden hidden">
                 <!-- Top row: breadcrumb + action buttons -->
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                     <div class="flex items-center gap-1.5 text-xs text-[var(--text-muted)] min-w-0">
@@ -400,62 +471,62 @@
                     <!-- Mark as Completed Toggle -->
                     <button id="mark-complete-btn" onclick="toggleNotebookCompletion()" class="neu-button px-2.5 sm:px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-[var(--text-muted)] shrink-0">
                         <i class="fa-regular fa-circle-check"></i>
-                        <span class="hidden xs:inline">Mark Done</span>
-                        <span class="xs:hidden">Done</span>
+                        <span class="hidden min-[480px]:inline">Mark Done</span>
+                        <span class="min-[480px]:hidden">Done</span>
                     </button>
                 </div>
             </div>
 
             <!-- NOTEBOOK DISPLAY CONTAINER -->
-            <div id="main-content-display" class="neu-flat p-3 sm:p-4 lg:p-6 min-h-[400px] sm:min-h-[500px] flex flex-col relative">
+            <div id="main-content-display" class="neu-flat p-2 sm:p-4 lg:p-6 flex-1 min-h-0 flex flex-col relative">
                 
                 <!-- Welcome Dashboard -->
-                <div id="welcome-view" class="my-auto py-12 flex flex-col items-center justify-center text-center px-4 max-w-2xl mx-auto">
-                    <div class="w-20 h-20 neu-pill flex items-center justify-center text-blue-500 text-3xl mb-6 shadow-lg">
+                <div id="welcome-view" class="my-auto py-6 sm:py-12 flex flex-col items-center justify-center text-center px-3 sm:px-4 max-w-2xl mx-auto">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 neu-pill flex items-center justify-center text-blue-500 text-2xl sm:text-3xl mb-4 sm:mb-6 shadow-lg">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <h2 class="text-2xl lg:text-3xl font-extrabold text-[var(--text-main)] mb-3">Master Data Structures & Algorithms</h2>
-                    <p class="text-sm text-[var(--text-muted)] leading-relaxed mb-8">
+                    <h2 class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[var(--text-main)] mb-2 sm:mb-3">Master Data Structures & Algorithms</h2>
+                    <p class="text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed mb-6 sm:mb-8">
                         Explore clean Jupyter Notebook notes covering Phase 00 (C++ Programming Refresh) through Phase 06 (Advanced Competitive Programming). 
                         Click any notebook in the sidebar to render it inline — or open it directly in Google Colab.
                     </p>
 
                     <!-- Feature Pills -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-left mb-8">
-                        <div class="neu-pressed p-4 rounded-xl flex flex-col gap-1">
-                            <i class="fa-solid fa-play text-emerald-400 text-lg mb-1"></i>
-                            <h4 class="font-bold text-xs text-[var(--text-main)]">Live Code Execution</h4>
-                            <p class="text-[11px] text-[var(--text-muted)]">Run C++ & Python cells right in the browser using Piston API.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full text-left mb-6 sm:mb-8">
+                        <div class="neu-pressed p-3 sm:p-4 rounded-xl flex flex-col gap-1">
+                            <i class="fa-solid fa-play text-emerald-400 text-base sm:text-lg mb-1"></i>
+                            <h4 class="font-bold text-[11px] sm:text-xs text-[var(--text-main)]">Live Code Execution</h4>
+                            <p class="text-[10px] sm:text-[11px] text-[var(--text-muted)]">Run C++ & Python cells right in the browser using Piston API.</p>
                         </div>
-                        <div class="neu-pressed p-4 rounded-xl flex flex-col gap-1">
-                            <i class="fa-solid fa-bolt text-amber-400 text-lg mb-1"></i>
-                            <h4 class="font-bold text-xs text-[var(--text-main)]">Colab & Binder</h4>
-                            <p class="text-[11px] text-[var(--text-muted)]">1-click launchers to run notebooks on Google Colab or MyBinder.</p>
+                        <div class="neu-pressed p-3 sm:p-4 rounded-xl flex flex-col gap-1">
+                            <i class="fa-solid fa-bolt text-amber-400 text-base sm:text-lg mb-1"></i>
+                            <h4 class="font-bold text-[11px] sm:text-xs text-[var(--text-main)]">Colab & Binder</h4>
+                            <p class="text-[10px] sm:text-[11px] text-[var(--text-muted)]">1-click launchers to run notebooks on Google Colab or MyBinder.</p>
                         </div>
-                        <div class="neu-pressed p-4 rounded-xl flex flex-col gap-1">
-                            <i class="fa-solid fa-chart-line text-blue-400 text-lg mb-1"></i>
-                            <h4 class="font-bold text-xs text-[var(--text-main)]">Progress Tracking</h4>
-                            <p class="text-[11px] text-[var(--text-muted)]">Mark notebooks done, bookmark favorites — all saved locally.</p>
+                        <div class="neu-pressed p-3 sm:p-4 rounded-xl flex flex-col gap-1">
+                            <i class="fa-solid fa-chart-line text-blue-400 text-base sm:text-lg mb-1"></i>
+                            <h4 class="font-bold text-[11px] sm:text-xs text-[var(--text-main)]">Progress Tracking</h4>
+                            <p class="text-[10px] sm:text-[11px] text-[var(--text-muted)]">Mark notebooks done, bookmark favorites — all saved locally.</p>
                         </div>
                     </div>
 
                     <!-- Stats Row -->
-                    <div class="flex items-center justify-center gap-8 mb-8 text-center">
+                    <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mb-6 sm:mb-8 text-center">
                         <div>
-                            <div class="text-2xl font-extrabold text-blue-500">7</div>
-                            <div class="text-xs text-[var(--text-muted)]">Learning Phases</div>
+                            <div class="text-xl sm:text-2xl font-extrabold text-blue-500">7</div>
+                            <div class="text-[10px] sm:text-xs text-[var(--text-muted)]">Learning Phases</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-extrabold text-emerald-500">26</div>
-                            <div class="text-xs text-[var(--text-muted)]">Notebooks</div>
+                            <div class="text-xl sm:text-2xl font-extrabold text-emerald-500">26</div>
+                            <div class="text-[10px] sm:text-xs text-[var(--text-muted)]">Notebooks</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-extrabold text-purple-500">100+</div>
-                            <div class="text-xs text-[var(--text-muted)]">Topics Covered</div>
+                            <div class="text-xl sm:text-2xl font-extrabold text-purple-500">100+</div>
+                            <div class="text-[10px] sm:text-xs text-[var(--text-muted)]">Topics Covered</div>
                         </div>
                     </div>
 
-                    <button onclick="selectFirstNotebook()" class="neu-button px-6 py-3 text-sm font-bold text-blue-500 hover:text-blue-400 flex items-center gap-2">
+                    <button onclick="selectFirstNotebook()" class="neu-button px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-blue-500 hover:text-blue-400 flex items-center gap-2">
                         <span>Start Learning → Phase 00</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
@@ -463,19 +534,19 @@
 
                 <!-- Loading State -->
                 <div id="loading-spinner" class="hidden absolute inset-0 bg-[var(--surface-color)]/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-3">
-                    <div class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
-                    <p class="text-xs font-semibold text-[var(--text-muted)] animate-subtle">Fetching & parsing notebook cells...</p>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+                    <p class="text-[11px] sm:text-xs font-semibold text-[var(--text-muted)] animate-subtle">Fetching & parsing notebook cells...</p>
                 </div>
 
                 <!-- Notebook Cells Container -->
-                <div id="cells-container" class="space-y-6 hidden"></div>
+                <div id="cells-container" class="space-y-4 sm:space-y-6 hidden"></div>
             </div>
 
         </main>
     </div>
 
     <!-- ========== FAVORITES SIDE DRAWER ========== -->
-    <div id="favorites-drawer" class="fixed inset-y-0 right-0 z-50 w-full sm:w-80 lg:w-96 bg-[var(--surface-color)] shadow-2xl border-l border-[var(--border-color)] transform translate-x-full transition-transform duration-300 ease-in-out p-4 sm:p-5 flex flex-col">
+    <div id="favorites-drawer" class="fixed inset-y-0 right-0 z-50 w-full sm:w-80 lg:w-96 bg-[var(--surface-color)] shadow-2xl border-l border-[var(--border-color)] transform translate-x-full transition-transform duration-300 ease-in-out p-3 sm:p-5 flex flex-col">
         <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-3 mb-4">
             <h3 class="font-bold text-base flex items-center gap-2 text-[var(--text-main)]">
                 <i class="fa-solid fa-heart text-red-400"></i> Favorite Notebooks
@@ -494,11 +565,11 @@
 
     <!-- ========== CODE SANDBOX / PLAYGROUND MODAL ========== -->
     <div id="playground-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-2 sm:p-4" style="display:none">
-        <div class="neu-flat w-full max-w-3xl max-h-[95vh] sm:max-h-[90vh] flex flex-col overflow-hidden bg-[var(--surface-color)] p-4 sm:p-6 gap-3 sm:gap-4 border border-[var(--border-color)]">
-            <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
-                <div class="flex items-center gap-2 min-w-0">
-                    <i class="fa-solid fa-terminal text-emerald-400 text-base sm:text-lg shrink-0"></i>
-                    <h3 class="font-bold text-sm sm:text-base text-[var(--text-main)] truncate">Interactive C++ / Python Playground</h3>
+        <div class="neu-flat w-full max-w-3xl max-h-[95vh] sm:max-h-[90vh] flex flex-col overflow-hidden bg-[var(--surface-color)] p-3 sm:p-4 lg:p-6 gap-2 sm:gap-3 lg:gap-4 border border-[var(--border-color)]">
+            <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-2 sm:pb-3">
+                <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <i class="fa-solid fa-terminal text-emerald-400 text-sm sm:text-base lg:text-lg shrink-0"></i>
+                    <h3 class="font-bold text-xs sm:text-sm lg:text-base text-[var(--text-main)] truncate">Interactive C++ / Python Playground</h3>
                 </div>
                 <button onclick="closePlaygroundModal()" class="neu-button p-2 text-xs text-[var(--text-muted)] hover:text-red-400 shrink-0">
                     <i class="fa-solid fa-xmark text-base"></i>
@@ -873,6 +944,10 @@
             updateHeaderButtonsState();
             renderSidebarPhases();
 
+            // Scroll main content area to top when loading new notebook
+            const mainEl = document.querySelector('main');
+            if (mainEl) mainEl.scrollTop = 0;
+
             try {
                 const response = await fetch(`${REPO_CONFIG.rawBaseUrl}/${path}`);
                 if (!response.ok) {
@@ -966,7 +1041,7 @@
                     const renderedHtml = marked.parse(rawMarkdown);
 
                     cellElement.innerHTML = `
-                        <div class="neu-flat p-5 text-sm markdown-body text-[var(--text-main)] leading-relaxed">
+                        <div class="neu-flat p-3 sm:p-5 text-sm markdown-body text-[var(--text-main)] leading-relaxed">
                             ${renderedHtml}
                         </div>
                     `;
@@ -979,26 +1054,26 @@
                     cellElement.innerHTML = `
                         <div class="neu-flat overflow-hidden border border-[var(--border-color)] rounded-2xl transition-colors duration-300">
                             <!-- Cell Header Bar -->
-                            <div class="flex items-center justify-between bg-[var(--surface-color)] px-4 py-2.5 border-b border-[var(--border-color)] text-xs">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-mono text-[11px] text-blue-500 dark:text-blue-400 font-bold">In [${index + 1}]:</span>
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border border-blue-500/20 uppercase">
+                            <div class="flex flex-wrap items-center justify-between gap-2 bg-[var(--surface-color)] px-3 sm:px-4 py-2 sm:py-2.5 border-b border-[var(--border-color)] text-xs">
+                                <div class="flex items-center gap-1.5 sm:gap-2">
+                                    <span class="font-mono text-[10px] sm:text-[11px] text-blue-500 dark:text-blue-400 font-bold">In [${index + 1}]:</span>
+                                    <span class="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold border border-blue-500/20 uppercase">
                                         ${lang}
                                     </span>
                                 </div>
                                 
-                                <div class="flex items-center gap-2">
-                                    <button onclick="toggleEditCodeCell('${cellId}')" id="edit-btn-${cellId}" class="neu-button px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:text-blue-500 flex items-center gap-1" title="Toggle Edit/View">
+                                <div class="flex items-center gap-1.5 sm:gap-2">
+                                    <button onclick="toggleEditCodeCell('${cellId}')" id="edit-btn-${cellId}" class="neu-button px-2 sm:px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold text-[var(--text-muted)] hover:text-blue-500 flex items-center gap-1" title="Toggle Edit/View">
                                         <i class="fa-solid fa-pen-to-square text-[10px]"></i>
-                                        <span id="edit-label-${cellId}">Edit</span>
+                                        <span id="edit-label-${cellId}" class="hidden min-[360px]:inline">Edit</span>
                                     </button>
 
-                                    <button onclick="copyCodeCell('${cellId}')" class="neu-button px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1" title="Copy Code">
+                                    <button onclick="copyCodeCell('${cellId}')" class="neu-button px-2 sm:px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold text-[var(--text-muted)] hover:text-[var(--text-main)] flex items-center gap-1" title="Copy Code">
                                         <i class="fa-regular fa-copy"></i>
-                                        <span>Copy</span>
+                                        <span class="hidden min-[360px]:inline">Copy</span>
                                     </button>
                                     
-                                    <button onclick="executeCodeCell('${cellId}', '${lang}')" id="run-btn-${cellId}" class="neu-button px-3.5 py-1 text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1.5">
+                                    <button onclick="executeCodeCell('${cellId}', '${lang}')" id="run-btn-${cellId}" class="neu-button px-2.5 sm:px-3.5 py-1 text-[10px] sm:text-xs font-bold text-emerald-500 hover:text-emerald-400 flex items-center gap-1 sm:gap-1.5">
                                         <i class="fa-solid fa-play text-[10px]"></i>
                                         <span>Run</span>
                                     </button>
@@ -1007,18 +1082,18 @@
 
                             <!-- Code Block with Standard C++ / Python Syntax Highlighting -->
                             <div class="relative group">
-                                <pre id="view-${cellId}" onclick="enableEditCodeCell('${cellId}')" class="p-4 font-mono text-xs overflow-x-auto rounded-b-xl leading-relaxed cursor-pointer select-text border-none" style="background: var(--code-bg); min-height: 60px;"><code class="language-${lang} hljs">${highlightCode(cleanCode, lang)}</code></pre>
+                                <pre id="view-${cellId}" onclick="enableEditCodeCell('${cellId}')" class="p-3 sm:p-4 font-mono text-[11px] sm:text-xs overflow-x-auto rounded-b-xl leading-relaxed cursor-pointer select-text border-none" style="background: var(--code-bg); min-height: 60px;"><code class="language-${lang} hljs">${highlightCode(cleanCode, lang)}</code></pre>
                                 
-                                <textarea id="${cellId}" data-code="true" data-lang="${lang}" class="w-full font-mono text-xs p-4 bg-[var(--code-bg)] text-[var(--code-text)] border-none outline-none resize-y focus:ring-1 focus:ring-blue-500/50 hidden" spellcheck="false">${escapeHtml(cleanCode)}</textarea>
+                                <textarea id="${cellId}" data-code="true" data-lang="${lang}" class="w-full font-mono text-[11px] sm:text-xs p-3 sm:p-4 bg-[var(--code-bg)] text-[var(--code-text)] border-none outline-none resize-y focus:ring-1 focus:ring-blue-500/50 hidden" spellcheck="false">${escapeHtml(cleanCode)}</textarea>
                             </div>
 
                             <!-- Output Box -->
-                            <div id="output-${cellId}" class="hidden border-t border-[var(--border-color)] p-4 crt-terminal">
-                                <div class="flex items-center justify-between text-[11px] text-[var(--text-muted)] mb-2 border-b border-[var(--border-color)] pb-1 font-mono">
+                            <div id="output-${cellId}" class="hidden border-t border-[var(--border-color)] p-3 sm:p-4 crt-terminal">
+                                <div class="flex items-center justify-between text-[10px] sm:text-[11px] text-[var(--text-muted)] mb-2 border-b border-[var(--border-color)] pb-1 font-mono">
                                     <span><i class="fa-solid fa-terminal text-cyan-400 mr-1"></i> Output</span>
                                     <span id="time-${cellId}">0ms</span>
                                 </div>
-                                <pre id="text-${cellId}" class="text-xs font-mono whitespace-pre-wrap text-emerald-500 dark:text-emerald-400">Executing...</pre>
+                                <pre id="text-${cellId}" class="text-[11px] sm:text-xs font-mono whitespace-pre-wrap text-emerald-500 dark:text-emerald-400">Executing...</pre>
                             </div>
                         </div>
                     `;
@@ -1373,11 +1448,11 @@
 
             const completeBtn = document.getElementById('mark-complete-btn');
             if (isDone) {
-                completeBtn.className = 'neu-button px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-emerald-400 active';
+                completeBtn.className = 'neu-button px-2.5 sm:px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-emerald-400 active';
                 completeBtn.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Completed ✓</span>`;
             } else {
-                completeBtn.className = 'neu-button px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-[var(--text-muted)]';
-                completeBtn.innerHTML = `<i class="fa-regular fa-circle-check"></i><span>Mark Done</span>`;
+                completeBtn.className = 'neu-button px-2.5 sm:px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5 text-[var(--text-muted)]';
+                completeBtn.innerHTML = `<i class="fa-regular fa-circle-check"></i><span class="hidden min-[480px]:inline">Mark Done</span><span class="min-[480px]:hidden">Done</span>`;
             }
         }
 
@@ -1408,7 +1483,7 @@
                     const hidden = sidebar.classList.contains('-translate-x-full');
                     if (hidden) {
                         // Open mobile sidebar
-                        sidebar.classList.remove('-translate-x-full');
+                        sidebar.classList.remove('-translate-x-full', 'desktop-collapsed');
                         icon.style.transform = 'rotate(0deg)';
                         // Show overlay
                         overlay.classList.remove('opacity-0', 'pointer-events-none');
@@ -1416,6 +1491,33 @@
                     } else {
                         closeSidebarMobile(sidebar, icon, overlay);
                     }
+                }
+            });
+
+            // Handle viewport resize: clean up mobile/desktop classes
+            window.addEventListener('resize', () => {
+                const isDesktop = window.innerWidth >= 1024;
+                if (isDesktop) {
+                    // Remove mobile-specific classes when switching to desktop
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.add('opacity-0', 'pointer-events-none');
+                    overlay.classList.remove('opacity-100');
+                    // Restore desktop collapsed state from localStorage
+                    if (localStorage.getItem('dsa_sidebar') === 'closed') {
+                        sidebar.classList.add('desktop-collapsed');
+                        sidebarOpen = false;
+                        if (icon) icon.style.transform = 'rotate(180deg)';
+                    } else {
+                        sidebar.classList.remove('desktop-collapsed');
+                        sidebarOpen = true;
+                        if (icon) icon.style.transform = 'rotate(0deg)';
+                    }
+                } else {
+                    // Remove desktop-specific classes when switching to mobile
+                    sidebar.classList.remove('desktop-collapsed');
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOpen = true;
+                    if (icon) icon.style.transform = 'rotate(180deg)';
                 }
             });
         }
