@@ -1,0 +1,35 @@
+{
+  "name": "DSA Bible — Master Data Structures & Algorithms",
+  "short_name": "DSA Bible",
+  "description": "Interactive DSA learning platform with Jupyter notebook viewer, live C++ & Python code execution, progress tracking, and Google Colab integration.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#141824",
+  "theme_color": "#141824",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "development", "books"],
+  "shortcuts": [
+    {
+      "name": "Phase 00: Refresh",
+      "url": "./index.html#Phase_00_Programming_Refresh%2F01_Pointers_and_References.ipynb"
+    },
+    {
+      "name": "Phase 02: Linear",
+      "url": "./index.html#Phase_02_Fundamental_Linear%2F01_Arrays_and_Two_Pointers.ipynb"
+    }
+  ]
+}
